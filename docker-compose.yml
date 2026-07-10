@@ -1,40 +1,54 @@
-# Docker Compose skeleton for local development.
-# 実装フェーズでビルドコンテキスト・環境変数・ボリューム等を詰めていく想定のひな形です。
-
 services:
   frontend:
     build:
       context: ./frontend
       dockerfile: Dockerfile
-    # ports:
-    #   - "3000:3000"
-    # env_file:
-    #   - ./frontend/.env
-    # depends_on:
-    #   - backend
+    ports:
+      - "3000:3000"
+    volumes:
+      - ./frontend:/app
+      - ./app/node_modules
+    env_file:
+      - ./frontend/.env
+    depends_on:
+      - backend
+    command: npm run dev
 
   backend:
     build:
       context: ./backend
       dockerfile: Dockerfile
-    # ports:
-    #   - "8000:8000"
-    # env_file:
-    #   - ./backend/.env
-    # depends_on:
-    #   - db
+    ports:
+      - "8000:8000"
+    volumes:
+      - ./backend:/var/www/html
+    env_file:
+      - ./backend/.env
+    depends_on:
+      - db
 
   db:
     image: mysql:8.0
-    # ports:
-    #   - "3306:3306"
-    # environment:
-    #   MYSQL_DATABASE: cat_photo_app
-    #   MYSQL_USER: app
-    #   MYSQL_PASSWORD: secret
-    #   MYSQL_ROOT_PASSWORD: root
-    # volumes:
-    #   - db-data:/var/lib/mysql
+    ports:
+      - "3306:3306"
+    environment:
+      MYSQL_DATABASE: cat_photo_app
+      MYSQL_USER: app
+      MYSQL_PASSWORD: secret
+      MYSQL_ROOT_PASSWORD: root
+    volumes:
+      - db-data:/var/lib/mysql
 
-# volumes:
-#   db-data:
+  phpmyadmin:
+    image: phpmyadmin/phpmyadmin
+    ports:
+      - "8080:80"
+    environment:
+      PMA_HOST: db
+      PMA_USER: app
+      PMA_PASSWORD: secret
+    depends_on:
+      - db
+
+volumes:
+  db-data:

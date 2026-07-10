@@ -1,40 +1,36 @@
-# frontend
+This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
 
-Next.js (App Router / TypeScript) 製のフロントエンドアプリケーション。
+## Getting Started
 
-## ディレクトリ構成
+First, run the development server:
 
-```
-frontend/
-├── src/
-│   ├── app/            # ルーティング（App Router）
-│   │   ├── (auth)/     # 認証系ページ（ログイン・登録）route group
-│   │   └── (main)/     # ログイン後のメイン画面 route group
-│   ├── components/     # 汎用UIコンポーネント
-│   │   ├── ui/          # ボタン・カードなど最小単位の見た目コンポーネント
-│   │   └── layout/      # ヘッダー・フッターなどレイアウト用コンポーネント
-│   ├── features/       # 機能（ドメイン）単位のコンポーネント・ロジック
-│   │   ├── cats/        # 猫プロフィール関連
-│   │   ├── photos/      # 写真アップロード・一覧関連
-│   │   └── auth/        # 認証関連
-│   ├── hooks/          # カスタムフック
-│   ├── lib/            # APIクライアントなど外部連携・共通処理
-│   ├── types/          # 型定義
-│   └── styles/         # グローバルスタイル
-└── public/             # 静的ファイル
+```bash
+npm run dev
+# or
+yarn dev
+# or
+pnpm dev
+# or
+bun dev
 ```
 
-## 採用理由
+Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
 
-- **App Router + route group**: `(auth)` `(main)` のようにroute groupでURLに影響を与えずに
-  レイアウトや認可の境界を分離できるため、認証必須ページと公開ページの見通しが良くなります。
-- **components/ と features/ の分離**: 見た目のみに責務を持つ再利用可能なUI部品（components/ui）と、
-  「猫」「写真」といったドメインに紐づくロジック・部品（features/*）を分けることで、
-  機能追加時の影響範囲を局所化しやすくしています。
-- **lib/ にAPIクライアントを集約**: Laravel APIとの通信部分を1箇所にまとめ、
-  エンドポイント変更や認証ヘッダー付与などの変更に強くしています。
+You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
 
-## Docker
+This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
 
-`Dockerfile` はNext.jsアプリをコンテナ化するためのひな形です。実装フェーズでNode.jsのバージョンや
-ビルド・起動コマンドを確定させます。
+## Learn More
+
+To learn more about Next.js, take a look at the following resources:
+
+- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
+- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+
+You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+
+## Deploy on Vercel
+
+The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+
+Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
