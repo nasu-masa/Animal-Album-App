@@ -1,54 +1,64 @@
 services:
+  # Next.js
   frontend:
     build:
-      context: ./frontend
-      dockerfile: Dockerfile
+      context: .
+      dockerfile: docker/frontend/Dockerfile
+    command: npm run dev -- -H 0.0.0.0
     ports:
       - "3000:3000"
     volumes:
       - ./frontend:/app
-      - ./app/node_modules
-    env_file:
-      - ./frontend/.env
-    depends_on:
-      - backend
-    command: npm run dev
+      - frontend-node-modules:/app/node_modules
 
+  # Laravel / PHP-FPM
   backend:
     build:
-      context: ./backend
-      dockerfile: Dockerfile
-    ports:
-      - "8000:8000"
+      context: .
+      dockerfile: docker/php/Dockerfile
     volumes:
       - ./backend:/var/www/html
-    env_file:
-      - ./backend/.env
+
     depends_on:
       - db
 
+  # LaravelへのHTTPリクエストを受けるWebサーバー
+  nginx:
+    image: nginx:alpine
+    ports:
+      - "8000:80"
+    volumes:
+      - ./backend:/var/www/html
+      - ./docker/nginx/default.conf:/etc/nginx/conf.d/default.conf:ro
+    depends_on:
+      - backend
+
+  # MySQL
   db:
-    image: mysql:8.0
+    image: mysql:8.4
     ports:
       - "3306:3306"
-    environment:
-      MYSQL_DATABASE: cat_photo_app
-      MYSQL_USER: app
-      MYSQL_PASSWORD: secret
-      MYSQL_ROOT_PASSWORD: root
     volumes:
       - db-data:/var/lib/mysql
+      - ./docker/mysql/my.cnf:/etc/mysql/conf.d/my.cnf:ro
+    environment:
+      MYSQL_DATABASE: ${MYSQL_DATABASE}
+      MYSQL_USER: ${MYSQL_USER}
+      MYSQL_PASSWORD: ${MYSQL_PASSWORD}
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
 
+  # DB確認用ツール
   phpmyadmin:
     image: phpmyadmin/phpmyadmin
     ports:
       - "8080:80"
     environment:
       PMA_HOST: db
-      PMA_USER: app
-      PMA_PASSWORD: secret
+      PMA_USER: ${MYSQL_USER}
+      PMA_PASSWORD: ${MYSQL_PASSWORD}
     depends_on:
       - db
 
 volumes:
   db-data:
+  frontend-node-modules:
