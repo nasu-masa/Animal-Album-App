@@ -244,7 +244,6 @@ erDiagram
         bigint user_id FK
         string type
         string file_path
-        string original_name
         string category
         datetime taken_at
         text memo
@@ -258,6 +257,7 @@ erDiagram
         bigint user_id FK
         bigint media_id FK
         datetime created_at
+        datetime updated_at
     }
 ```
 
