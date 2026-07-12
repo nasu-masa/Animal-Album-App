@@ -4,7 +4,7 @@ export const mockMedia: Media[] = [
   {
     id: 1,
     type: "image",
-    filePath: "/images/cat-1.jpg",
+    filePath: "/images/cat-1.png",
     category: "my_cat",
     takenAt: "2026-07-01",
     memo: "窓辺で昼寝している写真",
@@ -12,7 +12,7 @@ export const mockMedia: Media[] = [
   {
     id: 2,
     type: "image",
-    filePath: "/images/cat-2.jpg",
+    filePath: "/images/cat-2.png",
     category: "my_cat",
     takenAt: "2026-07-03",
     memo: "お気に入りのクッションでくつろいでいる",
@@ -28,7 +28,7 @@ export const mockMedia: Media[] = [
   {
     id: 4,
     type: "image",
-    filePath: "/images/cat-3.jpg",
+    filePath: "/images/cat-3.png",
     category: "other_cat",
     takenAt: "2026-06-28",
     memo: "近所で見かけた猫",
@@ -36,7 +36,7 @@ export const mockMedia: Media[] = [
   {
     id: 5,
     type: "image",
-    filePath: "/images/cat-4.jpg",
+    filePath: "/images/cat-4.png",
     category: "other_cat",
     takenAt: null,
     memo: null,
@@ -50,4 +50,3 @@ export const mockMedia: Media[] = [
     memo: "公園を歩いている猫の動画",
   },
 ];
-
