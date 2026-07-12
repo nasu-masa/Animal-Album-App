@@ -2,16 +2,12 @@ import { notFound } from "next/navigation";
 import Link from "next/link";
 import { mockMedia } from "@/mocks/media";
 import MediaPreview from "@/components/media/MediaPreview";
-import type { MediaType, MediaCategory } from "@/types/media";
+import type { MediaType } from "@/types/media";
+import { categoryLabels } from "@/constants/media";
 
 const typeLabel: Record<MediaType, string> = {
   image: "画像",
   video: "動画",
-};
-
-const categoryLabel: Record<MediaCategory, string> = {
-  my_cat: "うちの猫",
-  other_cat: "よその猫",
 };
 
 export default async function MediaDetailPage({
@@ -57,7 +53,9 @@ export default async function MediaDetailPage({
           </div>
           <div className="flex py-3">
             <dt className="w-24 shrink-0 text-gray-500">カテゴリ</dt>
-            <dd className="text-gray-900">{categoryLabel[media.category]}</dd>
+            <dd className="text-gray-900">
+              {categoryLabels[media.category] ?? media.category}
+            </dd>
           </div>
           <div className="flex py-3">
             <dt className="w-24 shrink-0 text-gray-500">撮影日</dt>
@@ -66,6 +64,10 @@ export default async function MediaDetailPage({
           <div className="flex py-3">
             <dt className="w-24 shrink-0 text-gray-500">メモ</dt>
             <dd className="text-gray-900">{media.memo ?? "メモなし"}</dd>
+          </div>
+          <div className="flex py-3">
+            <dt className="w-24 shrink-0 text-gray-500">投稿者</dt>
+            <dd className="text-gray-900">{media.user.name}</dd>
           </div>
         </dl>
       </div>

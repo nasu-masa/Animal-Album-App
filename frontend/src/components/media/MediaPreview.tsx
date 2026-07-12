@@ -8,10 +8,10 @@ type Props = {
   type: Media["type"];
   filePath: string;
   alt: string;
-  priority?: boolean;
+  eager?: boolean;
 };
 
-export default function MediaPreview({ type, filePath, alt, priority = false }: Props) {
+export default function MediaPreview({ type, filePath, alt, eager = false }: Props) {
   const [hasError, setHasError] = useState(false);
 
   if (type === "video") {
@@ -59,7 +59,8 @@ export default function MediaPreview({ type, filePath, alt, priority = false }: 
         alt={alt}
         fill
         sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
-        priority={priority}
+        loading={eager ? "eager" : "lazy"}
+        fetchPriority={eager ? "high" : "auto"}
         className="object-cover"
         onError={() => setHasError(true)}
       />
