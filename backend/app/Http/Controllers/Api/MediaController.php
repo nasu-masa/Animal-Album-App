@@ -18,4 +18,11 @@ class MediaController extends Controller
 
         return MediaResource::collection($media);
     }
+
+    public function show(Media $media): MediaResource
+    {
+        $media->load('user');
+
+        return new MediaResource($media);
+    }
 }

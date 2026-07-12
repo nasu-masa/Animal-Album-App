@@ -1,9 +1,10 @@
 import { notFound } from "next/navigation";
 import Link from "next/link";
-import { mockMedia } from "@/mocks/media";
 import MediaPreview from "@/components/media/MediaPreview";
 import type { MediaType } from "@/types/media";
 import { categoryLabels } from "@/constants/media";
+import { fetchMediaDetail } from "@/lib/media";
+import { formatDateTime } from "@/lib/date";
 
 const typeLabel: Record<MediaType, string> = {
   image: "画像",
@@ -16,7 +17,7 @@ export default async function MediaDetailPage({
   params: Promise<{ id: string }>;
 }) {
   const { id } = await params;
-  const media = mockMedia.find((m) => m.id === Number(id));
+  const media = await fetchMediaDetail(id);
 
   if (!media) {
     notFound();
@@ -43,6 +44,7 @@ export default async function MediaDetailPage({
             type={media.type}
             filePath={media.filePath}
             alt={media.memo ?? ""}
+            eager
           />
         )}
 
@@ -59,7 +61,7 @@ export default async function MediaDetailPage({
           </div>
           <div className="flex py-3">
             <dt className="w-24 shrink-0 text-gray-500">撮影日</dt>
-            <dd className="text-gray-900">{media.takenAt ?? "不明"}</dd>
+            <dd className="text-gray-900">{formatDateTime(media.takenAt)}</dd>
           </div>
           <div className="flex py-3">
             <dt className="w-24 shrink-0 text-gray-500">メモ</dt>
