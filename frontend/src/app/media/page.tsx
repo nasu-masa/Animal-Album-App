@@ -1,29 +1,14 @@
-import Image from "next/image";
+import MediaCard from "@/components/media/MediaCard";
 import { mockMedia } from "@/mocks/media";
 
 export default function MediaPage() {
   return (
-    <main>
-      <h1>写真一覧</h1>
+    <main className="mx-auto w-full max-w-6xl px-4 py-8">
+      <h1 className="mb-6 text-2xl font-bold">写真一覧</h1>
 
-      <div>
+      <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
         {mockMedia.map((media) => (
-          <article key={media.id}>
-            {media.type === "image" ? (
-              <Image
-                src={media.filePath}
-                alt={media.memo ?? "猫の写真"}
-                width={300}
-                height={200}
-              />
-            ) : (
-              <video src={media.filePath} controls width={300} />
-            )}
-
-            <p>{media.category}</p>
-            <p>{media.takenAt ?? "撮影日 不明"}</p>
-            <p>{media.memo ?? "メモなし"}</p>
-          </article>
+          <MediaCard key={media.id} media={media} />
         ))}
       </div>
     </main>
