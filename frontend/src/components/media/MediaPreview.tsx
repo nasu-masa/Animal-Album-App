@@ -8,9 +8,10 @@ type Props = {
   type: Media["type"];
   filePath: string;
   alt: string;
+  priority?: boolean;
 };
 
-export default function MediaPreview({ type, filePath, alt }: Props) {
+export default function MediaPreview({ type, filePath, alt, priority = false }: Props) {
   const [hasError, setHasError] = useState(false);
 
   if (type === "video") {
@@ -57,6 +58,8 @@ export default function MediaPreview({ type, filePath, alt }: Props) {
         src={filePath}
         alt={alt}
         fill
+        sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
+        priority={priority}
         className="object-cover"
         onError={() => setHasError(true)}
       />

@@ -4,9 +4,10 @@ import MediaPreview from "./MediaPreview";
 
 type Props = {
   media: Media;
+  priority?: boolean;
 };
 
-export default function MediaCard({ media }: Props) {
+export default function MediaCard({ media, priority }: Props) {
   return (
     <article className="overflow-hidden rounded-lg border border-gray-200 bg-white shadow-sm">
       <Link href={`/media/${media.id}`} className="block">
@@ -14,6 +15,7 @@ export default function MediaCard({ media }: Props) {
           type={media.type}
           filePath={media.filePath}
           alt={media.memo ?? "動物の写真"}
+          priority={priority}
         />
 
         <div className="space-y-1 p-3">
