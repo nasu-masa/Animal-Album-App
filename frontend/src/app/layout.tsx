@@ -5,7 +5,7 @@ import "./globals.css";
 
 export const metadata: Metadata = {
   title: "Cat Album",
-  description: "家族で使う猫の写真・動画アルバム",
+  description: "みんなで使う動物の写真・動画アルバム",
 };
 
 export default function RootLayout({
