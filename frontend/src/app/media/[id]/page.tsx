@@ -36,11 +36,19 @@ export default async function MediaDetailPage({
       </Link>
 
       <div className="overflow-hidden rounded-lg border border-gray-200 bg-white shadow-sm">
-        <MediaPreview
-          type={media.type}
-          filePath={media.filePath}
-          alt={media.memo ?? ""}
-        />
+        {media.type === "video" ? (
+          <video
+            controls
+            src={media.filePath}
+            className="w-full aspect-video"
+          />
+        ) : (
+          <MediaPreview
+            type={media.type}
+            filePath={media.filePath}
+            alt={media.memo ?? ""}
+          />
+        )}
 
         <dl className="divide-y divide-gray-100 p-4 text-sm">
           <div className="flex py-3">

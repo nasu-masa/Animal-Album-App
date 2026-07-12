@@ -45,8 +45,8 @@ export const mockMedia: Media[] = [
     id: 6,
     type: "video",
     filePath: "/videos/cat-2.mp4",
-    category: "other_cat",
+    category: "my_cat",
     takenAt: "2026-06-20",
-    memo: "公園を歩いている猫の動画",
+    memo: "毛づくろいしてる猫の動画",
   },
 ];
