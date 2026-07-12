@@ -9,7 +9,7 @@ export default function Header() {
           className="flex items-center gap-1.5 text-lg font-bold text-amber-600"
         >
           <span>🐾</span>
-          <span>Cat Album</span>
+          <span>Animal Album</span>
         </Link>
 
         <nav className="flex flex-wrap items-center gap-3 text-sm">
