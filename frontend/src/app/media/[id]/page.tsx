@@ -1,15 +1,9 @@
 import { notFound } from "next/navigation";
 import Link from "next/link";
 import MediaPreview from "@/components/media/MediaPreview";
-import type { MediaType } from "@/types/media";
 import { categoryLabels } from "@/constants/media";
 import { fetchMediaDetail } from "@/lib/media";
 import { formatDateTime } from "@/lib/date";
-
-const typeLabel: Record<MediaType, string> = {
-  image: "画像",
-  video: "動画",
-};
 
 export default async function MediaDetailPage({
   params,
@@ -49,10 +43,6 @@ export default async function MediaDetailPage({
         )}
 
         <dl className="divide-y divide-gray-100 p-4 text-sm">
-          <div className="flex py-3">
-            <dt className="w-24 shrink-0 text-gray-500">種別</dt>
-            <dd className="text-gray-900">{typeLabel[media.type]}</dd>
-          </div>
           <div className="flex py-3">
             <dt className="w-24 shrink-0 text-gray-500">カテゴリ</dt>
             <dd className="text-gray-900">

@@ -2,7 +2,6 @@ import Link from "next/link";
 import type { Media } from "@/types/media";
 import MediaPreview from "./MediaPreview";
 import { categoryLabels } from "@/constants/media";
-import { formatDate } from "@/lib/date";
 
 type Props = {
   media: Media;
@@ -13,21 +12,17 @@ export default function MediaCard({ media, eager }: Props) {
   return (
     <article className="overflow-hidden rounded-lg border border-gray-200 bg-white shadow-sm">
       <Link href={`/media/${media.id}`} className="block">
-        <MediaPreview
-          type={media.type}
-          filePath={media.filePath}
-          alt={media.memo ?? "動物の写真"}
-          eager={eager}
-        />
+        <div className="relative">
+          <MediaPreview
+            type={media.type}
+            filePath={media.filePath}
+            alt={media.memo ?? "動物の写真"}
+            eager={eager}
+          />
 
-        <div className="space-y-1 p-3">
-          <p className="text-xs text-gray-400">
+          <span className="absolute left-3 top-3 rounded-full bg-black/60 px-3 py-1 text-xs font-medium text-white">
             {categoryLabels[media.category] ?? media.category}
-          </p>
-          <p className="text-sm text-gray-500">
-            撮影日：{formatDate(media.takenAt)}
-          </p>
-          <p className="text-sm text-gray-700">{media.memo ?? "メモなし"}</p>
+          </span>
         </div>
       </Link>
     </article>
