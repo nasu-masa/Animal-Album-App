@@ -2,6 +2,7 @@ import Link from "next/link";
 import type { Media } from "@/types/media";
 import MediaPreview from "./MediaPreview";
 import { categoryLabels } from "@/constants/media";
+import { formatDate } from "@/lib/date";
 
 type Props = {
   media: Media;
@@ -24,7 +25,7 @@ export default function MediaCard({ media, eager }: Props) {
             {categoryLabels[media.category] ?? media.category}
           </p>
           <p className="text-sm text-gray-500">
-            撮影日：{media.takenAt ?? "不明"}
+            撮影日：{formatDate(media.takenAt)}
           </p>
           <p className="text-sm text-gray-700">{media.memo ?? "メモなし"}</p>
         </div>
