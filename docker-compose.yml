@@ -10,6 +10,11 @@ services:
     volumes:
       - ./frontend:/app
       - frontend-node-modules:/app/node_modules
+    environment:
+      API_URL: http://nginx
+      NEXT_PUBLIC_API_URL: http://localhost:8000
+    depends_on:
+      - nginx
 
   # Laravel / PHP-FPM
   backend:

@@ -1,6 +1,6 @@
 import type { ApiMedia, ApiMediaListResponse, Media } from "@/types/media";
 
-const baseUrl = process.env.API_URL;
+const baseUrl = process.env.API_URL ?? process.env.NEXT_PUBLIC_API_URL;
 
 function toMedia(api: ApiMedia): Media {
   return {
