@@ -1,6 +1,7 @@
 import Link from "next/link";
+import LogoutButton from "@/components/layout/LogoutButton";
 
-export default function Header() {
+export default function MainHeader() {
   return (
     <header className="sticky top-0 z-10 border-b border-orange-100 bg-white shadow-sm">
       <div className="mx-auto flex max-w-6xl flex-wrap items-center justify-between gap-y-2 px-4 py-3">
@@ -28,6 +29,7 @@ export default function Header() {
           >
             アップロード
           </Link>
+          <LogoutButton />
         </nav>
       </div>
     </header>
