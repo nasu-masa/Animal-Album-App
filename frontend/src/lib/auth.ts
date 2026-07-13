@@ -1,6 +1,7 @@
 import axios from "axios";
 
 import apiClient from "@/lib/apiClient";
+import type { User } from "@/types/user";
 
 type ValidationErrors = Record<string, string[]>;
 
@@ -39,6 +40,18 @@ function isValidationResponse(
     typeof response.message === "string" &&
     (response.errors === undefined || isValidationErrors(response.errors))
   );
+}
+
+export async function getUser(): Promise<User | null> {
+  try {
+    const res = await apiClient.get<User>("/api/user");
+    return res.data;
+  } catch (error) {
+    if (axios.isAxiosError(error) && error.response?.status === 401) {
+      return null;
+    }
+    throw error;
+  }
 }
 
 export async function login(email: string, password: string): Promise<void> {
