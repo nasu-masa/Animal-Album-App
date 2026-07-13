@@ -54,6 +54,14 @@ export async function getUser(): Promise<User | null> {
   }
 }
 
+export async function logout(): Promise<void> {
+  try {
+    await apiClient.post("/logout");
+  } catch {
+    throw new Error("ログアウトに失敗しました。時間をおいて再度お試しください。");
+  }
+}
+
 export async function login(email: string, password: string): Promise<void> {
   try {
     await apiClient.get("/sanctum/csrf-cookie");
