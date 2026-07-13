@@ -1,6 +1,7 @@
-import type { ApiMedia, ApiMediaListResponse, Media } from "@/types/media";
+import axios from "axios";
 
-const baseUrl = process.env.API_URL ?? process.env.NEXT_PUBLIC_API_URL;
+import apiClient from "@/lib/apiClient";
+import type { ApiMedia, ApiMediaListResponse, Media } from "@/types/media";
 
 function toMedia(api: ApiMedia): Media {
   return {
@@ -15,22 +16,22 @@ function toMedia(api: ApiMedia): Media {
 }
 
 export async function fetchMediaList(): Promise<Media[]> {
-  const res = await fetch(`${baseUrl}/api/media`);
-  if (!res.ok) {
-    throw new Error(`メディア一覧の取得に失敗しました (${res.status})`);
+  try {
+    const res = await apiClient.get<ApiMediaListResponse>("/api/media");
+    return res.data.data.map(toMedia);
+  } catch {
+    throw new Error("メディア一覧の取得に失敗しました");
   }
-  const json: ApiMediaListResponse = await res.json();
-  return json.data.map(toMedia);
 }
 
 export async function fetchMediaDetail(id: string): Promise<Media | null> {
-  const res = await fetch(`${baseUrl}/api/media/${id}`, { cache: "no-store" });
-  if (res.status === 404) {
-    return null;
+  try {
+    const res = await apiClient.get<{ data: ApiMedia }>(`/api/media/${id}`);
+    return toMedia(res.data.data);
+  } catch (error) {
+    if (axios.isAxiosError(error) && error.response?.status === 404) {
+      return null;
+    }
+    throw new Error("メディア詳細の取得に失敗しました");
   }
-  if (!res.ok) {
-    throw new Error(`メディア詳細の取得に失敗しました (${res.status})`);
-  }
-  const json: { data: ApiMedia } = await res.json();
-  return toMedia(json.data);
 }
