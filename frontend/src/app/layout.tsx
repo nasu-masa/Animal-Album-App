@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import "./globals.css";
 
 export const metadata: Metadata = {
-  title: "Cat Album",
+  title: "Animal Album",
   description: "みんなで使う動物の写真・動画アルバム",
 };
 
