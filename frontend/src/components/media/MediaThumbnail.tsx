@@ -11,13 +11,13 @@ type Props = {
   eager?: boolean;
 };
 
-export default function MediaPreview({ type, filePath, alt, eager = false }: Props) {
+export default function MediaThumbnail({ type, filePath, alt, eager = false }: Props) {
   const [hasError, setHasError] = useState(false);
 
   if (type === "video") {
     if (!filePath || hasError) {
       return (
-        <div className="flex items-center justify-center aspect-video bg-gray-100 text-gray-400 text-sm">
+        <div className="flex aspect-video items-center justify-center bg-gray-100 text-sm text-gray-400">
           動画を表示できません
         </div>
       );
@@ -30,8 +30,8 @@ export default function MediaPreview({ type, filePath, alt, eager = false }: Pro
           playsInline
           preload="metadata"
           className="pointer-events-none h-full w-full object-cover"
-          onLoadedMetadata={(event) => {
-            event.currentTarget.currentTime = 0.1;
+          onLoadedMetadata={(e) => {
+            e.currentTarget.currentTime = 0.1;
           }}
           onError={() => setHasError(true)}
         />
@@ -46,7 +46,7 @@ export default function MediaPreview({ type, filePath, alt, eager = false }: Pro
 
   if (!filePath || hasError) {
     return (
-      <div className="flex items-center justify-center aspect-video bg-gray-100 text-gray-400 text-sm">
+      <div className="flex aspect-video items-center justify-center bg-gray-100 text-sm text-gray-400">
         画像がありません
       </div>
     );

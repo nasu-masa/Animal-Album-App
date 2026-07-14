@@ -1,6 +1,6 @@
 import { notFound } from "next/navigation";
 import Link from "next/link";
-import MediaPreview from "@/components/media/MediaPreview";
+import MediaDetailPreview from "@/components/media/MediaDetailPreview";
 import { categoryLabels } from "@/constants/media";
 import { fetchMediaDetail } from "@/lib/media";
 import { formatDateTime } from "@/lib/date";
@@ -27,20 +27,11 @@ export default async function MediaDetailPage({
       </Link>
 
       <div className="overflow-hidden rounded-lg border border-gray-200 bg-white shadow-sm">
-        {media.type === "video" ? (
-          <video
-            controls
-            src={media.filePath}
-            className="w-full aspect-video"
-          />
-        ) : (
-          <MediaPreview
-            type={media.type}
-            filePath={media.filePath}
-            alt={media.memo ?? ""}
-            eager
-          />
-        )}
+        <MediaDetailPreview
+          type={media.type}
+          filePath={media.filePath}
+          alt={media.memo ?? ""}
+        />
 
         <dl className="divide-y divide-gray-100 p-4 text-sm">
           <div className="flex py-3">

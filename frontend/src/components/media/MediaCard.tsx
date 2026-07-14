@@ -1,6 +1,6 @@
 import Link from "next/link";
 import type { Media } from "@/types/media";
-import MediaPreview from "./MediaPreview";
+import MediaThumbnail from "./MediaThumbnail";
 import { categoryLabels } from "@/constants/media";
 
 type Props = {
@@ -13,7 +13,7 @@ export default function MediaCard({ media, eager }: Props) {
     <article className="overflow-hidden rounded-lg border border-gray-200 bg-white shadow-sm">
       <Link href={`/media/${media.id}`} className="block">
         <div className="relative">
-          <MediaPreview
+          <MediaThumbnail
             type={media.type}
             filePath={media.filePath}
             alt={media.memo ?? "動物の写真"}
