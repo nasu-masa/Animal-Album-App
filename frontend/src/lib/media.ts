@@ -17,8 +17,7 @@ function isValidationErrors(value: unknown): value is ValidationErrors {
   if (typeof value !== "object" || value === null) return false;
   return Object.values(value).every(
     (messages) =>
-      Array.isArray(messages) &&
-      messages.every((m) => typeof m === "string"),
+      Array.isArray(messages) && messages.every((m) => typeof m === "string"),
   );
 }
 
@@ -38,14 +37,24 @@ export async function uploadMedia(formData: FormData): Promise<void> {
     await apiClient.post("/api/media", formData, {
       headers: { Accept: "application/json" },
     });
-  } catch (error) {
-    if (axios.isAxiosError(error) && error.response?.status === 422) {
-      const data: unknown = error.response.data;
-      if (isValidationResponse(data)) {
-        throw new UploadValidationError(data.message, data.errors ?? {});
+  } catch (error: unknown) {
+    if (axios.isAxiosError(error)) {
+      if (error.response?.status === 413) {
+        throw new Error(
+          "ファイルサイズが大きすぎます。100MB以下のファイルを選択してください。",
+        );
+      }
+
+      if (error.response?.status === 422) {
+        const data: unknown = error.response.data;
+
+        if (isValidationResponse(data)) {
+          throw new UploadValidationError(data.message, data.errors ?? {});
+        }
       }
     }
-    throw new Error("アップロードに失敗しました。時間をおいて再度お試しください。");
+
+    throw error;
   }
 }
 

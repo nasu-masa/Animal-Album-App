@@ -6,6 +6,8 @@ import { categoryLabels } from "@/constants/media";
 import { uploadMedia, UploadValidationError } from "@/lib/media";
 import { extractTakenAt } from "@/lib/exif";
 
+const MAX_FILE_SIZE = 100 * 1024 * 1024;
+
 type FormState = {
   file: File | null;
   category: string;
@@ -31,6 +33,23 @@ export default function UploadPage() {
 
   function handleFileChange(e: React.ChangeEvent<HTMLInputElement>) {
     const file = e.target.files?.[0] ?? null;
+
+    if (file && file.size > MAX_FILE_SIZE) {
+      if (previewUrl) {
+        URL.revokeObjectURL(previewUrl);
+      }
+
+      setForm((prev) => ({ ...prev, file: null }));
+      setPreviewUrl(null);
+      setFieldErrors((prev) => ({
+        ...prev,
+        file: "ファイルサイズは100MB以下にしてください。",
+      }));
+
+      e.target.value = "";
+      return;
+    }
+
     if (previewUrl) URL.revokeObjectURL(previewUrl);
     setForm((prev) => ({ ...prev, file }));
     setPreviewUrl(file ? URL.createObjectURL(file) : null);
@@ -99,7 +118,10 @@ export default function UploadPage() {
       <h1 className="mb-6 text-2xl font-bold">アップロード</h1>
 
       {commonError && (
-        <p role="alert" className="mb-4 rounded-lg bg-red-50 px-4 py-3 text-sm text-red-600">
+        <p
+          role="alert"
+          className="mb-4 rounded-lg bg-red-50 px-4 py-3 text-sm text-red-600"
+        >
           {commonError}
         </p>
       )}
@@ -125,7 +147,9 @@ export default function UploadPage() {
             onChange={handleFileChange}
           />
           {fieldErrors.file && (
-            <p role="alert" className="mt-1 text-xs text-red-600">{fieldErrors.file}</p>
+            <p role="alert" className="mt-1 text-xs text-red-600">
+              {fieldErrors.file}
+            </p>
           )}
         </div>
 
@@ -136,14 +160,21 @@ export default function UploadPage() {
               <video src={previewUrl} controls className="w-full" />
             ) : (
               // eslint-disable-next-line @next/next/no-img-element
-              <img src={previewUrl} alt="プレビュー" className="w-full object-contain" />
+              <img
+                src={previewUrl}
+                alt="プレビュー"
+                className="w-full object-contain"
+              />
             )}
           </div>
         )}
 
         {/* カテゴリ */}
         <div>
-          <label htmlFor="category" className="mb-1 block text-sm font-medium text-gray-700">
+          <label
+            htmlFor="category"
+            className="mb-1 block text-sm font-medium text-gray-700"
+          >
             カテゴリ
           </label>
           <select
@@ -151,51 +182,69 @@ export default function UploadPage() {
             value={form.category}
             onChange={(e) => {
               setForm((prev) => ({ ...prev, category: e.target.value }));
-              setFieldErrors((prev) => ({ ...prev, category: "", }));
+              setFieldErrors((prev) => ({ ...prev, category: "" }));
             }}
             className="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm focus:border-orange-400 focus:outline-none focus:ring-1 focus:ring-orange-400"
           >
             <option value="">選択してください</option>
             {Object.entries(categoryLabels).map(([value, label]) => (
-              <option key={value} value={value}>{label}</option>
+              <option key={value} value={value}>
+                {label}
+              </option>
             ))}
           </select>
           {fieldErrors.category && (
-            <p role="alert" className="mt-1 text-xs text-red-600">{fieldErrors.category}</p>
+            <p role="alert" className="mt-1 text-xs text-red-600">
+              {fieldErrors.category}
+            </p>
           )}
         </div>
 
         {/* 撮影日 */}
         <div>
-          <label htmlFor="takenAt" className="mb-1 block text-sm font-medium text-gray-700">
+          <label
+            htmlFor="takenAt"
+            className="mb-1 block text-sm font-medium text-gray-700"
+          >
             撮影日
           </label>
           <input
             id="takenAt"
             type="date"
             value={form.takenAt}
-            onChange={(e) => setForm((prev) => ({ ...prev, takenAt: e.target.value }))}
+            onChange={(e) =>
+              setForm((prev) => ({ ...prev, takenAt: e.target.value }))
+            }
             className="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm focus:border-orange-400 focus:outline-none focus:ring-1 focus:ring-orange-400"
           />
           {fieldErrors.taken_at && (
-            <p role="alert" className="mt-1 text-xs text-red-600">{fieldErrors.taken_at}</p>
+            <p role="alert" className="mt-1 text-xs text-red-600">
+              {fieldErrors.taken_at}
+            </p>
           )}
         </div>
 
         {/* メモ */}
         <div>
-          <label htmlFor="memo" className="mb-1 block text-sm font-medium text-gray-700">
+          <label
+            htmlFor="memo"
+            className="mb-1 block text-sm font-medium text-gray-700"
+          >
             メモ
           </label>
           <textarea
             id="memo"
             rows={3}
             value={form.memo}
-            onChange={(e) => setForm((prev) => ({ ...prev, memo: e.target.value }))}
+            onChange={(e) =>
+              setForm((prev) => ({ ...prev, memo: e.target.value }))
+            }
             className="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm focus:border-orange-400 focus:outline-none focus:ring-1 focus:ring-orange-400"
           />
           {fieldErrors.memo && (
-            <p role="alert" className="mt-1 text-xs text-red-600">{fieldErrors.memo}</p>
+            <p role="alert" className="mt-1 text-xs text-red-600">
+              {fieldErrors.memo}
+            </p>
           )}
         </div>
 
@@ -211,13 +260,18 @@ export default function UploadPage() {
       {isModalOpen && form.file && previewUrl && (
         <div
           className="fixed inset-0 z-50 flex items-end justify-center bg-black/50 sm:items-center"
-          onClick={(e) => { if (e.target === e.currentTarget) setIsModalOpen(false); }}
+          onClick={(e) => {
+            if (e.target === e.currentTarget) setIsModalOpen(false);
+          }}
         >
           <div className="w-full max-w-lg overflow-y-auto rounded-t-2xl bg-white p-6 sm:rounded-2xl sm:shadow-xl max-h-[90dvh]">
             <h2 className="mb-4 text-lg font-bold">アップロード内容の確認</h2>
 
             {commonError && (
-              <p role="alert" className="mb-3 rounded-lg bg-red-50 px-4 py-3 text-sm text-red-600">
+              <p
+                role="alert"
+                className="mb-3 rounded-lg bg-red-50 px-4 py-3 text-sm text-red-600"
+              >
                 {commonError}
               </p>
             )}
@@ -227,7 +281,11 @@ export default function UploadPage() {
                 <video src={previewUrl} controls className="w-full" />
               ) : (
                 // eslint-disable-next-line @next/next/no-img-element
-                <img src={previewUrl} alt="プレビュー" className="w-full object-contain" />
+                <img
+                  src={previewUrl}
+                  alt="プレビュー"
+                  className="w-full object-contain"
+                />
               )}
             </div>
 
@@ -238,7 +296,9 @@ export default function UploadPage() {
               </div>
               <div className="flex py-2">
                 <dt className="w-24 shrink-0 text-gray-500">カテゴリ</dt>
-                <dd className="text-gray-900">{categoryLabels[form.category] ?? form.category}</dd>
+                <dd className="text-gray-900">
+                  {categoryLabels[form.category] ?? form.category}
+                </dd>
               </div>
               <div className="flex py-2">
                 <dt className="w-24 shrink-0 text-gray-500">撮影日</dt>
@@ -246,7 +306,9 @@ export default function UploadPage() {
               </div>
               <div className="flex py-2">
                 <dt className="w-24 shrink-0 text-gray-500">メモ</dt>
-                <dd className="whitespace-pre-wrap text-gray-900">{form.memo || "なし"}</dd>
+                <dd className="whitespace-pre-wrap text-gray-900">
+                  {form.memo || "なし"}
+                </dd>
               </div>
             </dl>
 
