@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\StoreMediaRequest;
 use App\Http\Resources\MediaResource;
 use App\Models\Media;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Resources\Json\ResourceCollection;
 use Illuminate\Support\Facades\Storage;
 
@@ -28,7 +29,7 @@ class MediaController extends Controller
         return new MediaResource($media);
     }
 
-    public function store(StoreMediaRequest $request): \Illuminate\Http\JsonResponse
+    public function store(StoreMediaRequest $request): JsonResponse
     {
         $file = $request->file('file');
         $mimeType = $file->getMimeType() ?? '';
