@@ -55,7 +55,7 @@ export default function RegisterPage() {
   return (
     <main className="flex min-h-[calc(100vh-8rem)] items-center justify-center px-4">
       <div className="w-full max-w-sm rounded-2xl bg-white p-8 shadow-md">
-        <h1 className="mb-6 text-center text-2xl font-bold text-emerald-800">
+        <h1 className="mb-6 text-center text-2xl font-bold text-amber-600">
           新規登録
         </h1>
 
