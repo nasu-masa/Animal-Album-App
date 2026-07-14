@@ -36,7 +36,7 @@ function isValidationResponse(
 export async function uploadMedia(formData: FormData): Promise<void> {
   try {
     await apiClient.post("/api/media", formData, {
-      headers: { "Content-Type": "multipart/form-data" },
+      headers: { Accept: "application/json" },
     });
   } catch (error) {
     if (axios.isAxiosError(error) && error.response?.status === 422) {
