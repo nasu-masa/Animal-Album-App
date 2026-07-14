@@ -374,7 +374,21 @@ DB_USERNAME=app
 DB_PASSWORD=secret
 ```
 
-### 3. Dockerイメージをビルドして起動
+### 3. Laravelの書き込み権限を設定（Linux / WSL）
+
+```bash
+sudo ./setup-permissions.sh
+```
+
+Laravelはホストからbind mountした`backend/storage`と`backend/bootstrap/cache`へ書き込みます。
+PHP-FPMはコンテナ内の`www-data`（GID 33）で動作するため、初回起動前にこのスクリプトを実行してください。
+
+スクリプトは所有者をホストユーザーのまま維持し、グループをGID 33へ変更してグループ書き込みを許可します。
+ディレクトリには`2775`（setgidを含む）、ファイルには`0664`を設定します。
+
+> macOSなど、ホスト側でGID 33が別の用途に割り当てられている環境や、Docker Desktopのbind mountがLinuxと異なる権限変換を行う環境では、この固定GIDが適合しない可能性があります。この手順はLinux / WSL向けです。macOSでbackendコンテナが書き込み不可として停止する場合は、GIDを固定せずホスト環境へ合わせる構成を別途検討してください。
+
+### 4. Dockerイメージをビルドして起動
 
 ```bash
 docker compose up -d --build
@@ -386,7 +400,7 @@ docker compose up -d --build
 docker compose ps
 ```
 
-### 4. Laravelをセットアップ
+### 5. Laravelをセットアップ
 
 ```bash
 docker compose exec backend composer install
@@ -401,7 +415,7 @@ docker compose exec backend php artisan storage:link
 docker compose exec backend php artisan migrate:status
 ```
 
-### 5. 動作確認
+### 6. 動作確認
 
 ブラウザから以下へアクセスします。
 
@@ -411,7 +425,7 @@ docker compose exec backend php artisan migrate:status
 | Laravel    | `http://localhost:8000` |
 | phpMyAdmin | `http://localhost:8080` |
 
-### 6. コンテナを停止
+### 7. コンテナを停止
 
 ```bash
 docker compose down
@@ -424,95 +438,6 @@ docker compose down -v
 ```
 
 > `-v`を付けるとMySQLのデータも削除されます。
-
----
-
-## 環境変数の管理
-
-以下の実ファイルはGit管理しません。
-
-```text
-.env
-frontend/.env.local
-backend/.env
-```
-
-代わりに、必要な環境変数を示す以下のファイルをGit管理します。
-
-```text
-.env.example
-frontend/.env.example
-backend/.env.example
-```
-
-`.env.example`には、本番環境のパスワードや秘密鍵を記載しません。
-
----
-
-## 開発方針
-
-### MVPを小さく分けて実装する
-
-すべての機能を一度に作るのではなく、機能単位で実装します。
-
-例：
-
-1. メディア一覧
-2. メディア詳細
-3. アップロード
-4. 絞り込み
-5. お気に入り
-6. 認証・権限
-
-### フロントエンドとAPIを機能単位で接続する
-
-フロントエンド全体とバックエンド全体を別々に完成させるのではなく、一覧機能などの単位でNext.jsとLaravel APIを接続しながら進めます。
-
-### 責務を分ける
-
-Laravelでは、Controllerへ処理を集中させず、必要に応じて以下へ分割します。
-
-* FormRequest
-* Resource
-* Service
-* Repository
-* Model
-
-Next.jsでは、UIとデータ取得処理を分け、コンポーネントを大きくしすぎないようにします。
-
-### 状態ごとの画面を用意する
-
-各画面では、正常時だけでなく以下の状態も実装します。
-
-* ローディング
-* エラー
-* データが存在しない場合
-* 操作に失敗した場合
-
----
-
-## AIの活用について
-
-開発では、ChatGPT、Claude Code、Codexを補助的に使用しています。
-
-| ツール         | 主な役割                 |
-| ----------- | -------------------- |
-| ChatGPT     | 要件整理、設計相談、学習、実装範囲の確認 |
-| Claude Code | 機能単位の実装、修正、動作確認      |
-| Codex       | 実装後のコードレビュー、問題点の確認   |
-
-AIへアプリ全体を一度に作らせるのではなく、機能を小さく区切って使用します。
-
-生成されたコードについては、以下を確認します。
-
-* 変更されたファイル
-* 各ファイルの役割
-* データの流れ
-* 採用された実装方法
-* エラー時の動作
-* テスト内容
-
-最終的には、自分の言葉で実装内容を説明できる状態を目指します。
 
 ---
 

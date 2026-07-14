@@ -22,5 +22,9 @@ RUN apt-get update && apt-get install -y \
     && rm -rf /var/lib/apt/lists/*
 
 COPY docker/php/php.ini /usr/local/etc/php/conf.d/php.ini
+COPY --chmod=755 docker/php/entrypoint.sh /usr/local/bin/backend-entrypoint
 
 WORKDIR /var/www/html
+
+ENTRYPOINT ["backend-entrypoint"]
+CMD ["php-fpm"]
