@@ -4,14 +4,16 @@ import { useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 
-import { login, LoginValidationError } from "@/lib/auth";
+import { register, RegisterValidationError } from "@/lib/auth";
 import AuthInput from "@/components/auth/AuthInput";
 import SubmitButton from "@/components/auth/SubmitButton";
 
-export default function LoginPage() {
+export default function RegisterPage() {
   const router = useRouter();
+  const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [passwordConfirmation, setPasswordConfirmation] = useState("");
   const [submitting, setSubmitting] = useState(false);
   const [fieldErrors, setFieldErrors] = useState<Record<string, string>>({});
   const [commonError, setCommonError] = useState("");
@@ -23,14 +25,13 @@ export default function LoginPage() {
     setCommonError("");
 
     try {
-      await login(email, password);
+      await register(name, email, password, passwordConfirmation);
       router.replace("/media");
     } catch (error) {
-      if (error instanceof LoginValidationError) {
+      if (error instanceof RegisterValidationError) {
         const first: Record<string, string> = {};
         for (const [field, messages] of Object.entries(error.errors)) {
           const firstMessage = messages[0];
-
           if (firstMessage) {
             first[field] = firstMessage;
           }
@@ -55,7 +56,7 @@ export default function LoginPage() {
     <main className="flex min-h-[calc(100vh-8rem)] items-center justify-center px-4">
       <div className="w-full max-w-sm rounded-2xl bg-white p-8 shadow-md">
         <h1 className="mb-6 text-center text-2xl font-bold text-emerald-800">
-          ログイン
+          新規登録
         </h1>
 
         {commonError && (
@@ -70,6 +71,18 @@ export default function LoginPage() {
         <form onSubmit={handleSubmit} noValidate>
           <div className="mb-4">
             <AuthInput
+              id="name"
+              label="名前"
+              type="text"
+              autoComplete="name"
+              value={name}
+              onChange={(e) => setName(e.target.value)}
+              error={fieldErrors.name}
+            />
+          </div>
+
+          <div className="mb-4">
+            <AuthInput
               id="email"
               label="メールアドレス"
               type="email"
@@ -80,28 +93,40 @@ export default function LoginPage() {
             />
           </div>
 
-          <div className="mb-6">
+          <div className="mb-4">
             <AuthInput
               id="password"
               label="パスワード"
               type="password"
-              autoComplete="current-password"
+              autoComplete="new-password"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               error={fieldErrors.password}
             />
           </div>
 
+          <div className="mb-6">
+            <AuthInput
+              id="password_confirmation"
+              label="パスワード（確認）"
+              type="password"
+              autoComplete="new-password"
+              value={passwordConfirmation}
+              onChange={(e) => setPasswordConfirmation(e.target.value)}
+              error={fieldErrors.password_confirmation}
+            />
+          </div>
+
           <SubmitButton
-            label="ログイン"
-            loadingLabel="ログイン中..."
+            label="新規登録"
+            loadingLabel="登録中..."
             disabled={submitting}
           />
 
           <p className="mt-6 text-center text-sm text-gray-500">
-            アカウントをお持ちでない方はこちら
-            <Link href="/register" className="ml-1 text-amber-600 hover:underline">
-              新規登録
+            アカウントをお持ちの方はこちら
+            <Link href="/login" className="ml-1 text-amber-600 hover:underline">
+              ログイン
             </Link>
           </p>
         </form>
