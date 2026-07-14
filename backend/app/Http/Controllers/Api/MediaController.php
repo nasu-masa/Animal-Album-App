@@ -7,6 +7,8 @@ use App\Http\Requests\StoreMediaRequest;
 use App\Http\Resources\MediaResource;
 use App\Models\Media;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Http\Request;
+use Illuminate\Http\Response;
 use Illuminate\Http\Resources\Json\ResourceCollection;
 use Illuminate\Support\Facades\Storage;
 
@@ -53,5 +55,16 @@ class MediaController extends Controller
         $media->load('user');
 
         return (new MediaResource($media))->response()->setStatusCode(201);
+    }
+
+    public function destroy(Request $request, Media $media): Response
+    {
+        if ($media->user_id !== $request->user()->id) {
+            abort(403, '権限がありません。');
+        }
+
+        $media->delete();
+
+        return response()->noContent();
     }
 }

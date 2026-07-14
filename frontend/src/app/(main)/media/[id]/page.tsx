@@ -1,9 +1,11 @@
 import { notFound } from "next/navigation";
 import Link from "next/link";
 import MediaDetailPreview from "@/components/media/MediaDetailPreview";
+import DeleteMediaButton from "@/components/media/DeleteMediaButton";
 import { categoryLabels } from "@/constants/media";
 import { fetchMediaDetail } from "@/lib/media";
 import { formatDateTime } from "@/lib/date";
+import { getUserOnServer } from "@/lib/authServer";
 
 export default async function MediaDetailPage({
   params,
@@ -11,20 +13,27 @@ export default async function MediaDetailPage({
   params: Promise<{ id: string }>;
 }) {
   const { id } = await params;
-  const media = await fetchMediaDetail(id);
-
+  const [media, currentUser] = await Promise.all([
+    fetchMediaDetail(id),
+    getUserOnServer(),
+  ]);
   if (!media) {
     notFound();
   }
 
+  const canDelete = currentUser !== null && media.user.id === currentUser.id;
+
   return (
     <main className="mx-auto w-full max-w-2xl px-4 py-8">
-      <Link
-        href="/media"
-        className="mb-6 inline-block text-sm text-amber-600 hover:underline"
-      >
-        ← 一覧に戻る
-      </Link>
+      <div className="mb-6 flex items-center justify-between">
+        <Link
+          href="/media"
+          className="text-sm text-amber-600 hover:underline"
+        >
+          ← 一覧に戻る
+        </Link>
+        {canDelete && <DeleteMediaButton mediaId={media.id} />}
+      </div>
 
       <div className="overflow-hidden rounded-lg border border-gray-200 bg-white shadow-sm">
         <MediaDetailPreview

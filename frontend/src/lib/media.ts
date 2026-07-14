@@ -32,6 +32,22 @@ function isValidationResponse(
   );
 }
 
+export async function deleteMedia(id: number): Promise<void> {
+  try {
+    await apiClient.delete(`/api/media/${id}`);
+  } catch (error) {
+    if (axios.isAxiosError(error)) {
+      if (error.response?.status === 403) {
+        throw new Error("削除する権限がありません。");
+      }
+      if (error.response?.status === 404) {
+        throw new Error("メディアが見つかりません。");
+      }
+    }
+    throw new Error("削除に失敗しました。時間をおいて再度お試しください。");
+  }
+}
+
 export async function uploadMedia(formData: FormData): Promise<void> {
   try {
     await apiClient.post("/api/media", formData, {
