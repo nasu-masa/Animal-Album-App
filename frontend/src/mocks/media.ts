@@ -9,6 +9,7 @@ export const mockMedia: Media[] = [
     takenAt: "2026-07-01",
     memo: "窓辺で昼寝している写真",
     user: { id: 1, name: "田中 蓮" },
+    isFavorited: false,
   },
   {
     id: 2,
@@ -18,6 +19,7 @@ export const mockMedia: Media[] = [
     takenAt: "2026-07-03",
     memo: "お気に入りのクッションでくつろいでいる",
     user: { id: 1, name: "田中 蓮" },
+    isFavorited: false,
   },
   {
     id: 3,
@@ -27,6 +29,7 @@ export const mockMedia: Media[] = [
     takenAt: "2026-07-05",
     memo: "おもちゃで遊んでいる動画",
     user: { id: 1, name: "田中 蓮" },
+    isFavorited: false,
   },
   {
     id: 4,
@@ -36,6 +39,7 @@ export const mockMedia: Media[] = [
     takenAt: "2026-06-28",
     memo: "近所で見かけた猫",
     user: { id: 2, name: "鈴木 結衣" },
+    isFavorited: false,
   },
   {
     id: 5,
@@ -45,6 +49,7 @@ export const mockMedia: Media[] = [
     takenAt: null,
     memo: null,
     user: { id: 2, name: "鈴木 結衣" },
+    isFavorited: false,
   },
   {
     id: 6,
@@ -54,5 +59,6 @@ export const mockMedia: Media[] = [
     takenAt: "2026-06-20",
     memo: "毛づくろいしてる猫の動画",
     user: { id: 3, name: "伊藤 凪" },
+    isFavorited: false,
   },
 ];

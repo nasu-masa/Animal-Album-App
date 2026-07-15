@@ -2,9 +2,10 @@ import { notFound } from "next/navigation";
 import Link from "next/link";
 import MediaDetailPreview from "@/components/media/MediaDetailPreview";
 import DeleteMediaButton from "@/components/media/DeleteMediaButton";
+import FavoriteButton from "@/components/media/FavoriteButton";
 import { categoryLabels } from "@/constants/media";
-import { fetchMediaDetail } from "@/lib/media";
-import { formatDateTime } from "@/lib/date";
+import { fetchMediaDetailOnServer } from "@/lib/mediaServer";
+import { formatDate } from "@/lib/date";
 import { getUserOnServer } from "@/lib/authServer";
 
 export default async function MediaDetailPage({
@@ -14,7 +15,7 @@ export default async function MediaDetailPage({
 }) {
   const { id } = await params;
   const [media, currentUser] = await Promise.all([
-    fetchMediaDetail(id),
+    fetchMediaDetailOnServer(id),
     getUserOnServer(),
   ]);
   if (!media) {
@@ -25,10 +26,10 @@ export default async function MediaDetailPage({
 
   return (
     <main className="mx-auto w-full max-w-2xl px-4 py-8">
-      <div className="mb-6 flex items-center justify-between">
+      <div className="mb-4 flex items-center justify-between">
         <Link
           href="/"
-          className="text-sm text-amber-600 hover:underline"
+          className="font-bold text-sm text-amber-600 hover:underline"
         >
           ← 一覧に戻る
         </Link>
@@ -42,6 +43,17 @@ export default async function MediaDetailPage({
           alt={media.memo ?? ""}
         />
 
+        <div className="flex items-center justify-end border-t border-gray-100 px-4 py-0.5">
+          <div className="flex items-center gap-1 text-sm text-gray-700">
+            <FavoriteButton
+              mediaId={media.id}
+              isFavorited={media.isFavorited}
+              isLoggedIn={currentUser !== null}
+            />
+            <span>お気に入り</span>
+          </div>
+        </div>
+
         <dl className="divide-y divide-gray-100 p-4 text-sm">
           <div className="flex py-3">
             <dt className="w-24 shrink-0 text-gray-500">カテゴリ</dt>
@@ -51,7 +63,7 @@ export default async function MediaDetailPage({
           </div>
           <div className="flex py-3">
             <dt className="w-24 shrink-0 text-gray-500">撮影日</dt>
-            <dd className="text-gray-900">{formatDateTime(media.takenAt)}</dd>
+            <dd className="text-gray-900">{formatDate(media.takenAt)}</dd>
           </div>
           <div className="flex py-3">
             <dt className="w-24 shrink-0 text-gray-500">メモ</dt>

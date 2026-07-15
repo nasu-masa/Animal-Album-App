@@ -15,6 +15,7 @@ export type Media = {
   takenAt: string | null;
   memo: string | null;
   user: MediaUser;
+  isFavorited: boolean;
 };
 
 export type ApiMedia = {
@@ -25,6 +26,7 @@ export type ApiMedia = {
   taken_at: string | null;
   memo: string | null;
   user: MediaUser;
+  is_favorited: boolean;
 };
 
 export type ApiMediaListResponse = {

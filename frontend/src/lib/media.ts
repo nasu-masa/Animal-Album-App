@@ -32,6 +32,40 @@ function isValidationResponse(
   );
 }
 
+export class FavoriteAuthenticationError extends Error {}
+
+export async function addFavorite(mediaId: number): Promise<void> {
+  try {
+    await apiClient.post(`/api/favorites/${mediaId}`);
+  } catch (error) {
+    if (axios.isAxiosError(error)) {
+      if (error.response?.status === 401) {
+        throw new FavoriteAuthenticationError();
+      }
+      if (error.response?.status === 404) {
+        throw new Error("メディアが見つかりません。");
+      }
+    }
+    throw new Error("お気に入り登録に失敗しました。");
+  }
+}
+
+export async function removeFavorite(mediaId: number): Promise<void> {
+  try {
+    await apiClient.delete(`/api/favorites/${mediaId}`);
+  } catch (error) {
+    if (axios.isAxiosError(error)) {
+      if (error.response?.status === 401) {
+        throw new FavoriteAuthenticationError();
+      }
+      if (error.response?.status === 404) {
+        throw new Error("メディアが見つかりません。");
+      }
+    }
+    throw new Error("お気に入り解除に失敗しました。");
+  }
+}
+
 export async function deleteMedia(id: number): Promise<void> {
   try {
     await apiClient.delete(`/api/media/${id}`);
@@ -83,6 +117,7 @@ function toMedia(api: ApiMedia): Media {
     takenAt: api.taken_at,
     memo: api.memo,
     user: api.user,
+    isFavorited: api.is_favorited,
   };
 }
 
