@@ -19,7 +19,7 @@ export default function DeleteMediaButton({ mediaId }: Props) {
     setError("");
     try {
       await deleteMedia(mediaId);
-      router.replace("/media");
+      router.replace("/");
     } catch (err) {
       setError(err instanceof Error ? err.message : "削除に失敗しました。");
       setDeleting(false);
