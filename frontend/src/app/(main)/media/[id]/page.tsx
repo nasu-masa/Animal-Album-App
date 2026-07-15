@@ -43,7 +43,7 @@ export default async function MediaDetailPage({
           alt={media.memo ?? ""}
         />
 
-        <div className="flex items-center justify-end border-t border-gray-100 px-4 py-0.5">
+        <div className="flex items-center justify-end border-t border-gray-100 px-4 py-2">
           <div className="flex items-center gap-1 text-sm text-gray-700">
             <FavoriteButton
               mediaId={media.id}
@@ -54,7 +54,7 @@ export default async function MediaDetailPage({
           </div>
         </div>
 
-        <dl className="divide-y divide-gray-100 p-4 text-sm">
+        <dl className="divide-y divide-gray-100 px-4 pb-4 text-sm">
           <div className="flex py-3">
             <dt className="w-24 shrink-0 text-gray-500">カテゴリ</dt>
             <dd className="text-gray-900">
