@@ -38,6 +38,8 @@ export type MediaCategory =
   | "amphibian"
   | "other";
 
+export type MediaListSort = "asc" | "desc";
+
 export type MediaUser = {
   id: number;
   name: string;

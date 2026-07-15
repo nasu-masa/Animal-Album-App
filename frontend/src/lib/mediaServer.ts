@@ -1,6 +1,12 @@
 import "server-only";
 import { cookies } from "next/headers";
-import type { ApiMedia, ApiMediaListResponse, Media } from "@/types/media";
+import type {
+  ApiMedia,
+  ApiMediaListResponse,
+  Media,
+  MediaListParams,
+  MediaListResult,
+} from "@/types/media";
 
 function toMedia(api: ApiMedia): Media {
   return {
@@ -31,19 +37,34 @@ async function buildHeaders(): Promise<HeadersInit> {
   };
 }
 
-export async function fetchMediaListOnServer(): Promise<Media[]> {
+export async function fetchMediaListOnServer(
+  params?: MediaListParams,
+): Promise<MediaListResult> {
   const headers = await buildHeaders();
-  const res = await fetch(`${process.env.API_URL}/api/media`, {
-    headers,
-    cache: "no-store",
-  });
+
+  const searchParams = new URLSearchParams();
+  if (params?.category) searchParams.set("category", params.category);
+  if (params?.type) searchParams.set("type", params.type);
+  if (params?.sort) searchParams.set("sort", params.sort);
+  if (params?.page && params.page > 1) {
+    searchParams.set("page", String(params.page));
+  }
+  const qs = searchParams.toString();
+
+  const res = await fetch(
+    `${process.env.API_URL}/api/media${qs ? `?${qs}` : ""}`,
+    { headers, cache: "no-store" },
+  );
 
   if (!res.ok) {
     throw new Error(`メディア一覧の取得に失敗しました (${res.status})`);
   }
 
   const data = (await res.json()) as ApiMediaListResponse;
-  return data.data.map(toMedia);
+  return {
+    media: data.data.map(toMedia),
+    meta: data.meta,
+  };
 }
 
 export async function fetchMediaDetailOnServer(id: string): Promise<Media | null> {

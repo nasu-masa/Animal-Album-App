@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\IndexMediaRequest;
 use App\Http\Requests\StoreMediaRequest;
 use App\Http\Resources\MediaResource;
 use App\Models\Media;
@@ -14,17 +15,23 @@ use Illuminate\Support\Facades\Storage;
 
 class MediaController extends Controller
 {
-    public function index(Request $request): ResourceCollection
+    public function index(IndexMediaRequest $request): ResourceCollection
     {
-        $userId = $request->user()?->id;
+        $userId    = $request->user()?->id;
+        $sortOrder = $request->validated('sort') === 'asc' ? 'asc' : 'desc';
 
         $media = Media::with([
             'user',
             'favorites' => fn($q) => $q->where('user_id', $userId),
         ])
-            ->orderBy('taken_at', 'desc')
-            ->orderBy('created_at', 'desc')
-            ->paginate(20);
+            ->when($request->validated('category'), fn($q, $v) => $q->where('category', $v))
+            ->when($request->validated('type'),     fn($q, $v) => $q->where('type', $v))
+            ->orderByRaw('taken_at IS NULL')
+            ->orderBy('taken_at', $sortOrder)
+            ->orderBy('created_at', $sortOrder)
+            ->orderBy('id', $sortOrder)
+            ->paginate(20)
+            ->withQueryString();
 
         return MediaResource::collection($media);
     }
