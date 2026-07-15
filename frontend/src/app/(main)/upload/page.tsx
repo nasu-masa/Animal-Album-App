@@ -137,7 +137,7 @@ export default function UploadPage() {
             onClick={() => fileInputRef.current?.click()}
             className="w-full rounded-lg border border-dashed border-gray-300 bg-white px-4 py-6 text-sm text-gray-500 hover:border-orange-400 hover:text-orange-500"
           >
-            {form.file ? form.file.name : "クリックしてファイルを選択"}
+            {form.file ? form.file.name : "ファイルを選択"}
           </button>
           <input
             ref={fileInputRef}
