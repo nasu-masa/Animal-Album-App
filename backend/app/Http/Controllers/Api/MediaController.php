@@ -14,9 +14,14 @@ use Illuminate\Support\Facades\Storage;
 
 class MediaController extends Controller
 {
-    public function index(): ResourceCollection
+    public function index(Request $request): ResourceCollection
     {
-        $media = Media::with('user')
+        $userId = $request->user()?->id;
+
+        $media = Media::with([
+            'user',
+            'favorites' => fn($q) => $q->where('user_id', $userId),
+        ])
             ->orderBy('taken_at', 'desc')
             ->orderBy('created_at', 'desc')
             ->paginate(20);
@@ -24,9 +29,14 @@ class MediaController extends Controller
         return MediaResource::collection($media);
     }
 
-    public function show(Media $media): MediaResource
+    public function show(Request $request, Media $media): MediaResource
     {
-        $media->load('user');
+        $userId = $request->user()?->id;
+
+        $media->load([
+            'user',
+            'favorites' => fn($q) => $q->where('user_id', $userId),
+        ]);
 
         return new MediaResource($media);
     }
