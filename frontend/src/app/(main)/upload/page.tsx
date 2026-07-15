@@ -2,15 +2,16 @@
 
 import { useState, useRef } from "react";
 import { useRouter } from "next/navigation";
-import { categoryLabels } from "@/constants/media";
+import { categoryGroups, categoryLabels } from "@/constants/media";
 import { uploadMedia, UploadValidationError } from "@/lib/media";
 import { extractTakenAt } from "@/lib/exif";
+import type { MediaCategory } from "@/types/media";
 
 const MAX_FILE_SIZE = 100 * 1024 * 1024;
 
 type FormState = {
   file: File | null;
-  category: string;
+  category: MediaCategory | "";
   takenAt: string;
   memo: string;
 };
@@ -181,16 +182,23 @@ export default function UploadPage() {
             id="category"
             value={form.category}
             onChange={(e) => {
-              setForm((prev) => ({ ...prev, category: e.target.value }));
+              setForm((prev) => ({
+                ...prev,
+                category: e.target.value as MediaCategory | "",
+              }));
               setFieldErrors((prev) => ({ ...prev, category: "" }));
             }}
             className="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm focus:border-orange-400 focus:outline-none focus:ring-1 focus:ring-orange-400"
           >
             <option value="">選択してください</option>
-            {Object.entries(categoryLabels).map(([value, label]) => (
-              <option key={value} value={value}>
-                {label}
-              </option>
+            {categoryGroups.map((group) => (
+              <optgroup key={group.label} label={group.label}>
+                {group.options.map((option) => (
+                  <option key={option.value} value={option.value}>
+                    {option.label}
+                  </option>
+                ))}
+              </optgroup>
             ))}
           </select>
           {fieldErrors.category && (
@@ -297,7 +305,7 @@ export default function UploadPage() {
               <div className="flex py-2">
                 <dt className="w-24 shrink-0 text-gray-500">カテゴリ</dt>
                 <dd className="text-gray-900">
-                  {categoryLabels[form.category] ?? form.category}
+                  {form.category ? categoryLabels[form.category] : "未選択"}
                 </dd>
               </div>
               <div className="flex py-2">

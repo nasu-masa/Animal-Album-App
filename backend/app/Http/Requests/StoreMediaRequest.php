@@ -2,7 +2,9 @@
 
 namespace App\Http\Requests;
 
+use App\Enums\MediaCategory;
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Validation\Rule;
 
 class StoreMediaRequest extends FormRequest
 {
@@ -15,7 +17,7 @@ class StoreMediaRequest extends FormRequest
     {
         return [
             'file'     => ['required', 'file', 'mimetypes:image/jpeg,image/png,image/gif,image/webp,video/mp4,video/quicktime,video/webm', 'max:102400'],
-            'category' => ['required', 'string', 'in:cat,dog,bird,rabbit,hamster,fish,reptile,other'],
+            'category' => ['required', 'string', Rule::in(MediaCategory::values())],
             'taken_at' => ['nullable', 'date'],
             'memo'     => ['nullable', 'string', 'max:1000'],
         ];

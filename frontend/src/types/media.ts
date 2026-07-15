@@ -1,6 +1,42 @@
 export type MediaType = "image" | "video";
 
-export type MediaCategory = string;
+export type MediaCategory =
+  | "cat"
+  | "dog"
+  | "rabbit"
+  | "hamster"
+  | "guinea_pig"
+  | "chinchilla"
+  | "degu"
+  | "mouse"
+  | "rat"
+  | "rodent"
+  | "primate"
+  | "mammal"
+  | "budgerigar"
+  | "cockatiel"
+  | "lovebird"
+  | "java_sparrow"
+  | "canary"
+  | "parrot"
+  | "bird"
+  | "goldfish"
+  | "medaka"
+  | "betta"
+  | "guppy"
+  | "koi"
+  | "tropical_fish"
+  | "fish"
+  | "turtle"
+  | "lizard"
+  | "snake"
+  | "gecko"
+  | "reptile"
+  | "frog"
+  | "newt"
+  | "salamander"
+  | "amphibian"
+  | "other";
 
 export type MediaUser = {
   id: number;
@@ -27,6 +63,18 @@ export type ApiMedia = {
   memo: string | null;
   user: MediaUser;
   is_favorited: boolean;
+};
+
+export type MediaListParams = {
+  category?: MediaCategory;
+  type?: MediaType;
+  sort?: MediaListSort;
+  page?: number;
+};
+
+export type MediaListResult = {
+  media: Media[];
+  meta: ApiMediaListResponse["meta"];
 };
 
 export type ApiMediaListResponse = {
