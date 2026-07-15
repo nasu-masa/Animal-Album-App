@@ -11,20 +11,15 @@ class FavoriteSeeder extends Seeder
 {
     public function run(): void
     {
-        $users  = User::all()->values();
-        $medias = Media::all()->values();
+        $demoUser = User::where('email', 'demo@example.com')->firstOrFail();
+        $otherUserMedia = Media::where(
+            'file_path',
+            'media/seed/images/dog_running.jpg',
+        )->firstOrFail();
 
-        // unique(user_id, media_id) 制約に違反しないよう、組み合わせを明示
-        $records = [
-            ['user_id' => $users[0]->id, 'media_id' => $medias[2]->id],
-            ['user_id' => $users[0]->id, 'media_id' => $medias[4]->id],
-            ['user_id' => $users[1]->id, 'media_id' => $medias[0]->id],
-            ['user_id' => $users[2]->id, 'media_id' => $medias[0]->id],
-            ['user_id' => $users[2]->id, 'media_id' => $medias[2]->id],
-        ];
-
-        foreach ($records as $data) {
-            Favorite::create($data);
-        }
+        Favorite::create([
+            'user_id'  => $demoUser->id,
+            'media_id' => $otherUserMedia->id,
+        ]);
     }
 }
