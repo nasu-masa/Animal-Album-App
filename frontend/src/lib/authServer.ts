@@ -9,7 +9,7 @@ export const getUserOnServer = cache(async (): Promise<User | null> => {
     .getAll()
     .map(({ name, value }) => `${name}=${value}`)
     .join("; ");
-  const frontendUrl = process.env.FRONTEND_URL ?? "http://loclahost:3000";
+  const frontendUrl = process.env.FRONTEND_URL ?? "http://localhost:3000";
 
   const res = await fetch(`${process.env.API_URL}/api/user`, {
     headers: {
