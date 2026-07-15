@@ -21,10 +21,10 @@ export default function MediaFilterBar() {
   }
 
   const selectClass =
-    "rounded-lg border border-gray-200 bg-white px-3 py-2 text-sm text-gray-700 shadow-sm focus:outline-none focus:ring-2 focus:ring-amber-400";
+    "w-full rounded-lg border border-gray-200 bg-white px-3 py-2 text-sm text-gray-700 shadow-sm focus:outline-none focus:ring-2 focus:ring-amber-400 sm:w-auto";
 
   return (
-    <div className="mb-6 flex flex-wrap gap-3">
+    <div className="mb-6 flex flex-col gap-3 sm:flex-row sm:flex-wrap">
       <select
         value={searchParams.get("category") ?? ""}
         onChange={(e) => updateParam("category", e.target.value)}
