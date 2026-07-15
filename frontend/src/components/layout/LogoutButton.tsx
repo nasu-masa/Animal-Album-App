@@ -15,7 +15,7 @@ export default function LogoutButton() {
 
     try {
       await logout();
-      router.replace("/login");
+      router.replace("/");
     } catch (e) {
       setError(
         e instanceof Error
