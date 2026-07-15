@@ -67,7 +67,9 @@ export default function FavoriteButton({
             : "text-gray-300 hover:text-amber-400"
         }`}
       >
-        {isFavorited ? "♥" : "♡"}
+        <span className="inline-block scale-125">
+          {isFavorited ? "♥" : "♡"}
+        </span>
       </button>
       {error && (
         <span
