@@ -26,7 +26,7 @@ export default function RegisterPage() {
 
     try {
       await register(name, email, password, passwordConfirmation);
-      router.replace("/media");
+      router.replace("/");
     } catch (error) {
       if (error instanceof RegisterValidationError) {
         const first: Record<string, string> = {};

@@ -27,7 +27,7 @@ export default async function MediaDetailPage({
     <main className="mx-auto w-full max-w-2xl px-4 py-8">
       <div className="mb-6 flex items-center justify-between">
         <Link
-          href="/media"
+          href="/"
           className="text-sm text-amber-600 hover:underline"
         >
           ← 一覧に戻る

@@ -1,8 +1,9 @@
 import "server-only";
+import { cache } from "react";
 import { cookies } from "next/headers";
 import type { User } from "@/types/user";
 
-export async function getUserOnServer(): Promise<User | null> {
+export const getUserOnServer = cache(async (): Promise<User | null> => {
   const cookieStore = await cookies();
   const cookieHeader = cookieStore
     .getAll()
@@ -29,4 +30,4 @@ export async function getUserOnServer(): Promise<User | null> {
   }
 
   return res.json() as Promise<User>;
-}
+});

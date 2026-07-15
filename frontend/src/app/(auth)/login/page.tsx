@@ -24,7 +24,7 @@ export default function LoginPage() {
 
     try {
       await login(email, password);
-      router.replace("/media");
+      router.replace("/");
     } catch (error) {
       if (error instanceof LoginValidationError) {
         const first: Record<string, string> = {};

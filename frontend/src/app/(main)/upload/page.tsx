@@ -89,7 +89,7 @@ export default function UploadPage() {
 
     try {
       await uploadMedia(formData);
-      router.replace("/media");
+      router.replace("/");
     } catch (error) {
       if (error instanceof UploadValidationError) {
         const first: Record<string, string> = {};
