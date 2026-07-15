@@ -27,6 +27,7 @@ export default function RegisterPage() {
     try {
       await register(name, email, password, passwordConfirmation);
       router.replace("/");
+      router.refresh();
     } catch (error) {
       if (error instanceof RegisterValidationError) {
         const first: Record<string, string> = {};

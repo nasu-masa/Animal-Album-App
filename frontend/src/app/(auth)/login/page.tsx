@@ -25,6 +25,7 @@ export default function LoginPage() {
     try {
       await login(email, password);
       router.replace("/");
+      router.refresh();
     } catch (error) {
       if (error instanceof LoginValidationError) {
         const first: Record<string, string> = {};
