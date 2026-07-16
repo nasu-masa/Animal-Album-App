@@ -6,7 +6,7 @@ import FavoriteButton from "@/components/media/FavoriteButton";
 import { categoryLabels } from "@/constants/media";
 import { fetchMediaDetailOnServer } from "@/lib/mediaServer";
 import { formatDate } from "@/lib/date";
-import { getUserOnServer } from "@/lib/authServer";
+import { getUserForPublicPageOnServer } from "@/lib/authServer";
 
 export default async function MediaDetailPage({
   params,
@@ -14,15 +14,16 @@ export default async function MediaDetailPage({
   params: Promise<{ id: string }>;
 }) {
   const { id } = await params;
-  const [media, currentUser] = await Promise.all([
+  const [media, userResult] = await Promise.all([
     fetchMediaDetailOnServer(id),
-    getUserOnServer(),
+    getUserForPublicPageOnServer(),
   ]);
   if (!media) {
     notFound();
   }
 
-  const canDelete = currentUser !== null && media.user.id === currentUser.id;
+  const canDelete =
+    userResult.user !== null && media.user.id === userResult.user.id;
 
   return (
     <main className="mx-auto w-full max-w-2xl px-4 py-8">
@@ -48,7 +49,7 @@ export default async function MediaDetailPage({
             <FavoriteButton
               mediaId={media.id}
               isFavorited={media.isFavorited}
-              isLoggedIn={currentUser !== null}
+              isLoggedIn={userResult.user !== null}
             />
             <span>お気に入り</span>
           </div>

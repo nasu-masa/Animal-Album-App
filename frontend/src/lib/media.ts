@@ -1,6 +1,7 @@
 import axios from "axios";
 
 import apiClient from "@/lib/apiClient";
+import { UPLOAD_TIMEOUT_MS } from "@/constants/api";
 import type { ApiMedia, ApiMediaListResponse, Media } from "@/types/media";
 
 type ValidationErrors = Record<string, string[]>;
@@ -86,9 +87,22 @@ export async function uploadMedia(formData: FormData): Promise<void> {
   try {
     await apiClient.post("/api/media", formData, {
       headers: { Accept: "application/json" },
+      timeout: UPLOAD_TIMEOUT_MS,
     });
   } catch (error: unknown) {
     if (axios.isAxiosError(error)) {
+      if (error.code === "ECONNABORTED" || error.code === "ETIMEDOUT") {
+        throw new Error(
+          "通信に時間がかかっています。時間をおいてもう一度お試しください。",
+        );
+      }
+
+      if (error.response?.status === 401) {
+        throw new Error(
+          "ログインの有効期限が切れました。再度ログインしてください。",
+        );
+      }
+
       if (error.response?.status === 413) {
         throw new Error(
           "ファイルサイズが大きすぎます。100MB以下のファイルを選択してください。",
@@ -101,10 +115,28 @@ export async function uploadMedia(formData: FormData): Promise<void> {
         if (isValidationResponse(data)) {
           throw new UploadValidationError(data.message, data.errors ?? {});
         }
+
+        throw new Error(
+          "入力内容に誤りがあります。内容を確認してもう一度お試しください。",
+        );
+      }
+
+      if (!error.response) {
+        throw new Error(
+          "サーバーとの通信に失敗しました。接続を確認してもう一度お試しください。",
+        );
+      }
+
+      if (error.response.status >= 500) {
+        throw new Error(
+          "一時的な問題が発生しました。時間をおいてもう一度お試しください。",
+        );
       }
     }
 
-    throw error;
+    throw new Error(
+      "アップロードに失敗しました。内容を確認してもう一度お試しください。",
+    );
   }
 }
 

@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import "./globals.css";
 import MainHeader from "@/components/layout/MainHeader";
 import Footer from "@/components/layout/Footer";
-import { getUserOnServer } from "@/lib/authServer";
+import { getUserForPublicPageOnServer } from "@/lib/authServer";
 
 export const metadata: Metadata = {
   title: "Animal Album",
@@ -14,7 +14,7 @@ export default async function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  const user = await getUserOnServer();
+  const { user } = await getUserForPublicPageOnServer();
 
   return (
     <html lang="ja">

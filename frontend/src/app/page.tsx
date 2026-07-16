@@ -6,7 +6,7 @@ import MediaFilterBar from "@/components/media/MediaFilterBar";
 import MediaPagination from "@/components/media/MediaPagination";
 import { categoryLabels } from "@/constants/media";
 import { fetchMediaListOnServer } from "@/lib/mediaServer";
-import { getUserOnServer } from "@/lib/authServer";
+import { getUserForPublicPageOnServer } from "@/lib/authServer";
 import { createMediaListHref } from "@/lib/mediaListUrl";
 import type {
   MediaCategory,
@@ -56,9 +56,9 @@ export default async function Home({
     page: toPage(firstValue(raw.page)),
   };
 
-  const [{ media: mediaList, meta }, user] = await Promise.all([
+  const [{ media: mediaList, meta }, userResult] = await Promise.all([
     fetchMediaListOnServer(params),
-    getUserOnServer(),
+    getUserForPublicPageOnServer(),
   ]);
 
   if (params.page && params.page > meta.last_page) {
@@ -100,7 +100,7 @@ export default async function Home({
               <MediaCard
                 key={media.id}
                 media={media}
-                isLoggedIn={user !== null}
+                isLoggedIn={userResult.user !== null}
                 eager={index === 0}
               />
             ))}

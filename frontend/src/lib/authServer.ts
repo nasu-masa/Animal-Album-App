@@ -1,7 +1,13 @@
 import "server-only";
 import { cache } from "react";
 import { cookies } from "next/headers";
+import { API_TIMEOUT_MS } from "@/constants/api";
 import type { User } from "@/types/user";
+
+export type PublicUserResult =
+  | { status: "authenticated"; user: User }
+  | { status: "unauthenticated"; user: null }
+  | { status: "unavailable"; user: null };
 
 export const getUserOnServer = cache(async (): Promise<User | null> => {
   const cookieStore = await cookies();
@@ -19,6 +25,7 @@ export const getUserOnServer = cache(async (): Promise<User | null> => {
       Referer: `${frontendUrl}/`,
     },
     cache: "no-store",
+    signal: AbortSignal.timeout(API_TIMEOUT_MS),
   });
 
   if (res.status === 401) {
@@ -31,3 +38,17 @@ export const getUserOnServer = cache(async (): Promise<User | null> => {
 
   return res.json() as Promise<User>;
 });
+
+export const getUserForPublicPageOnServer = cache(
+  async (): Promise<PublicUserResult> => {
+    try {
+      const user = await getUserOnServer();
+      return user === null
+        ? { status: "unauthenticated", user: null }
+        : { status: "authenticated", user };
+    } catch (error) {
+      console.error("ページ用の認証情報を取得できませんでした。", error);
+      return { status: "unavailable", user: null };
+    }
+  },
+);

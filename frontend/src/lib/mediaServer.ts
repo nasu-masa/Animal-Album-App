@@ -1,5 +1,6 @@
 import "server-only";
 import { cookies } from "next/headers";
+import { API_TIMEOUT_MS } from "@/constants/api";
 import type {
   ApiMedia,
   ApiMediaListResponse,
@@ -53,7 +54,11 @@ export async function fetchMediaListOnServer(
 
   const res = await fetch(
     `${process.env.API_URL}/api/media${qs ? `?${qs}` : ""}`,
-    { headers, cache: "no-store" },
+    {
+      headers,
+      cache: "no-store",
+      signal: AbortSignal.timeout(API_TIMEOUT_MS),
+    },
   );
 
   if (!res.ok) {
@@ -72,6 +77,7 @@ export async function fetchMediaDetailOnServer(id: string): Promise<Media | null
   const res = await fetch(`${process.env.API_URL}/api/media/${id}`, {
     headers,
     cache: "no-store",
+    signal: AbortSignal.timeout(API_TIMEOUT_MS),
   });
 
   if (res.status === 404) {
@@ -91,6 +97,7 @@ export async function fetchFavoriteListOnServer(): Promise<Media[]> {
   const res = await fetch(`${process.env.API_URL}/api/favorites`, {
     headers,
     cache: "no-store",
+    signal: AbortSignal.timeout(API_TIMEOUT_MS),
   });
 
   if (!res.ok) {
