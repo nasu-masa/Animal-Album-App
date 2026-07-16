@@ -17,6 +17,24 @@ services:
     depends_on:
       - nginx
 
+  # Playwright E2Eテスト
+  playwright:
+    image: mcr.microsoft.com/playwright:v1.61.0-noble
+    init: true
+    ipc: host
+    working_dir: /app
+    volumes:
+      - ./frontend:/app
+      - playwright-node-modules:/app/node_modules
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+    environment:
+      PLAYWRIGHT_BASE_URL: http://localhost:3000
+    depends_on:
+      - frontend
+      - nginx
+    command: sh -c "npm ci && npm run test:e2e"
+
   # Laravel / PHP-FPM
   backend:
     build:
@@ -83,3 +101,4 @@ services:
 volumes:
   db-data:
   frontend-node-modules:
+  playwright-node-modules:
