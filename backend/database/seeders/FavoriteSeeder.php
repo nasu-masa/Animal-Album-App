@@ -12,14 +12,21 @@ class FavoriteSeeder extends Seeder
     public function run(): void
     {
         $demoUser = User::where('email', 'demo@example.com')->firstOrFail();
-        $otherUserMedia = Media::where(
-            'file_path',
-            'media/seed/images/dog_running.jpg',
-        )->firstOrFail();
 
-        Favorite::create([
-            'user_id'  => $demoUser->id,
-            'media_id' => $otherUserMedia->id,
-        ]);
+        $favoriteFilePaths = [
+            'media/seed/images/turtle_small.jpg',
+            'media/seed/images/hamster_eating.jpg',
+            'media/seed/images/Lizard_Sleeping_In_Terrarium.jpg',
+            'media/seed/videos/cat_relaxing.mp4',
+        ];
+
+        foreach ($favoriteFilePaths as $filePath) {
+            $media = Media::where('file_path', $filePath)->firstOrFail();
+
+            Favorite::create([
+                'user_id'  => $demoUser->id,
+                'media_id' => $media->id,
+            ]);
+        }
     }
 }
