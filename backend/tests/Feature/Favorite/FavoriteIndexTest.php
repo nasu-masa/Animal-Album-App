@@ -39,6 +39,52 @@ class FavoriteIndexTest extends TestCase
             ->assertJsonPath('data.0.is_favorited', true);
     }
 
+    public function test_favorites_are_ordered_the_same_as_media_index(): void
+    {
+        $user = User::factory()->create();
+
+        $lowerIdMedia = Media::factory()->create([
+            'taken_at' => '2026-07-15 13:00:00',
+            'created_at' => '2026-07-15 14:00:00',
+        ]);
+        $higherIdMedia = Media::factory()->create([
+            'taken_at' => '2026-07-15 13:00:00',
+            'created_at' => '2026-07-15 14:00:00',
+        ]);
+        $newerCreatedMedia = Media::factory()->create([
+            'taken_at' => '2026-07-15 13:00:00',
+            'created_at' => '2026-07-15 15:00:00',
+        ]);
+        $olderTakenMedia = Media::factory()->create([
+            'taken_at' => '2026-07-14 12:30:00',
+        ]);
+        $nullTakenMedia = Media::factory()->create([
+            'taken_at' => null,
+        ]);
+
+        foreach ([
+            $lowerIdMedia,
+            $higherIdMedia,
+            $newerCreatedMedia,
+            $olderTakenMedia,
+            $nullTakenMedia,
+        ] as $media) {
+            Favorite::factory()->for($user)->for($media)->create();
+        }
+
+        Sanctum::actingAs($user);
+
+        $response = $this->getJson('/api/favorites');
+
+        $response
+            ->assertOk()
+            ->assertJsonPath('data.0.id', $newerCreatedMedia->id)
+            ->assertJsonPath('data.1.id', $higherIdMedia->id)
+            ->assertJsonPath('data.2.id', $lowerIdMedia->id)
+            ->assertJsonPath('data.3.id', $olderTakenMedia->id)
+            ->assertJsonPath('data.4.id', $nullTakenMedia->id);
+    }
+
     public function test_authenticated_user_can_view_empty_favorites(): void
     {
         $user = User::factory()->create();

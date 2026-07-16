@@ -21,7 +21,10 @@ class FavoriteController extends Controller
                 'user',
                 'favorites' => fn($q) => $q->where('user_id', $userId),
             ])
+            ->orderByRaw('taken_at IS NULL')
+            ->orderBy('taken_at', 'desc')
             ->orderBy('created_at', 'desc')
+            ->orderBy('id', 'desc')
             ->get();
 
         return MediaResource::collection($media);
