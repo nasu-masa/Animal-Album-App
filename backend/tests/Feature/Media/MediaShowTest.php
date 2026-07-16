@@ -45,15 +45,11 @@ class MediaShowTest extends TestCase
 
     public function test_guest_receives_not_found_when_viewing_nonexistent_media(): void
     {
-        $media = Media::factory()->create();
-        $nonexistentMediaId = $media->id + 1;
+        $nonexistentMediaId = PHP_INT_MAX;
 
         $response = $this->getJson("/api/media/{$nonexistentMediaId}");
 
         $response->assertNotFound();
-        $this->assertDatabaseHas('media', [
-            'id' => $media->id,
-        ]);
     }
 
     public function test_authenticated_user_can_view_favorite_status_in_media_detail(): void
