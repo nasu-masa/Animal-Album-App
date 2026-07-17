@@ -2,7 +2,6 @@ import axios from "axios";
 
 import apiClient from "@/lib/apiClient";
 import { UPLOAD_TIMEOUT_MS } from "@/constants/api";
-import type { ApiMedia, ApiMediaListResponse, Media } from "@/types/media";
 
 type ValidationErrors = Record<string, string[]>;
 
@@ -137,39 +136,5 @@ export async function uploadMedia(formData: FormData): Promise<void> {
     throw new Error(
       "アップロードに失敗しました。内容を確認してもう一度お試しください。",
     );
-  }
-}
-
-function toMedia(api: ApiMedia): Media {
-  return {
-    id: api.id,
-    type: api.type,
-    filePath: api.file_path,
-    category: api.category,
-    takenAt: api.taken_at,
-    memo: api.memo,
-    user: api.user,
-    isFavorited: api.is_favorited,
-  };
-}
-
-export async function fetchMediaList(): Promise<Media[]> {
-  try {
-    const res = await apiClient.get<ApiMediaListResponse>("/api/media");
-    return res.data.data.map(toMedia);
-  } catch {
-    throw new Error("メディア一覧の取得に失敗しました");
-  }
-}
-
-export async function fetchMediaDetail(id: string): Promise<Media | null> {
-  try {
-    const res = await apiClient.get<{ data: ApiMedia }>(`/api/media/${id}`);
-    return toMedia(res.data.data);
-  } catch (error) {
-    if (axios.isAxiosError(error) && error.response?.status === 404) {
-      return null;
-    }
-    throw new Error("メディア詳細の取得に失敗しました");
   }
 }
