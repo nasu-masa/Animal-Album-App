@@ -40,7 +40,7 @@ class FavoriteDestroyTest extends TestCase
         ]);
     }
 
-    public function test_authenticated_user_cannot_remove_another_users_favorite(): void
+    public function test_removing_another_users_favorite_is_silently_ignored(): void
     {
         $user = User::factory()->create();
         $otherUser = User::factory()->create();
