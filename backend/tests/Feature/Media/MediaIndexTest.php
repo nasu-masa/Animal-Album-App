@@ -15,6 +15,38 @@ class MediaIndexTest extends TestCase
 {
     use RefreshDatabase;
 
+    public function test_guest_cannot_view_their_media_list(): void
+    {
+        $response = $this->getJson('/api/media/mine');
+
+        $response->assertUnauthorized();
+    }
+
+    public function test_user_can_view_only_their_own_media(): void
+    {
+        $user = User::factory()->create();
+        $otherUser = User::factory()->create();
+        $userMedia = Media::factory()->for($user)->create();
+        $otherUserMedia = Media::factory()->for($otherUser)->create();
+        Sanctum::actingAs($user);
+
+        $response = $this->getJson('/api/media/mine');
+
+        $response
+            ->assertOk()
+            ->assertJsonCount(1, 'data')
+            ->assertJsonStructure([
+                'data',
+                'links',
+                'meta',
+            ]);
+
+        $mediaIds = collect($response->json('data'))->pluck('id');
+
+        $this->assertTrue($mediaIds->contains($userMedia->id));
+        $this->assertFalse($mediaIds->contains($otherUserMedia->id));
+    }
+
     public function test_guest_can_view_media_list(): void
     {
         $user = User::factory()->create();

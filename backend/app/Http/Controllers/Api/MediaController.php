@@ -36,6 +36,25 @@ class MediaController extends Controller
         return MediaResource::collection($media);
     }
 
+    public function mine(Request $request): ResourceCollection
+    {
+        $userId = $request->user()->id;
+
+        $media = Media::with([
+            'user',
+            'favorites' => fn($q) => $q->where('user_id', $userId),
+        ])
+            ->where('user_id', $userId)
+            ->orderByRaw('taken_at IS NULL')
+            ->orderBy('taken_at', 'desc')
+            ->orderBy('created_at', 'desc')
+            ->orderBy('id', 'desc')
+            ->paginate(20)
+            ->withQueryString();
+
+        return MediaResource::collection($media);
+    }
+
     public function show(Request $request, Media $media): MediaResource
     {
         $userId = $request->user()?->id;

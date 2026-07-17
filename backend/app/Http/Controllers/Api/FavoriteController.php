@@ -25,7 +25,8 @@ class FavoriteController extends Controller
             ->orderBy('taken_at', 'desc')
             ->orderBy('created_at', 'desc')
             ->orderBy('id', 'desc')
-            ->get();
+            ->paginate(20)
+            ->withQueryString();
 
         return MediaResource::collection($media);
     }

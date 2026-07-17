@@ -96,4 +96,32 @@ class FavoriteIndexTest extends TestCase
             ->assertOk()
             ->assertJsonCount(0, 'data');
     }
+
+    public function test_user_favorites_are_paginated(): void
+    {
+        $user = User::factory()->create();
+        $mediaList = Media::factory()->count(21)->create();
+
+        foreach ($mediaList as $media) {
+            Favorite::factory()->for($user)->for($media)->create();
+        }
+
+        Sanctum::actingAs($user);
+
+        $response = $this->getJson('/api/favorites');
+
+        $response
+            ->assertOk()
+            ->assertJsonCount(20, 'data')
+            ->assertJsonStructure([
+                'data',
+                'links',
+                'meta',
+            ])
+            ->assertJsonPath('meta.total', 21);
+
+        $this->getJson('/api/favorites?page=2')
+            ->assertOk()
+            ->assertJsonCount(1, 'data');
+    }
 }
