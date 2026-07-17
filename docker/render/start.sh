@@ -23,6 +23,7 @@ if [[ ! -e public/storage && ! -L public/storage ]]; then
     php artisan storage:link
 fi
 
+php artisan migrate --force
 php artisan optimize
 
 php-fpm --nodaemonize &
