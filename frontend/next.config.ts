@@ -8,23 +8,23 @@ const nextConfig: NextConfig = {
   async rewrites() {
     return [
       {
-        source: "/sanctum/csrf-cookie",
+        source: "/backend/sanctum/csrf-cookie",
         destination: `${apiUrl}/sanctum/csrf-cookie`,
       },
       {
-        source: "/login",
+        source: "/backend/login",
         destination: `${apiUrl}/login`,
       },
       {
-        source: "/logout",
+        source: "/backend/logout",
         destination: `${apiUrl}/logout`,
       },
       {
-        source: "/register",
+        source: "/backend/register",
         destination: `${apiUrl}/register`,
       },
       {
-        source: "/api/:path*",
+        source: "/backend/api/:path*",
         destination: `${apiUrl}/api/:path*`,
       },
     ];
