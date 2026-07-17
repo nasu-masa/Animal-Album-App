@@ -28,6 +28,26 @@ class MediaDestroyTest extends TestCase
         ]);
     }
 
+    public function test_authenticated_user_cannot_delete_media_when_delete_is_disabled(): void
+    {
+        config(['features.media_delete' => false]);
+        $user = User::factory()->create();
+        $media = Media::factory()->for($user)->create();
+        Sanctum::actingAs($user);
+
+        $response = $this->deleteJson("/api/media/{$media->id}");
+
+        $response
+            ->assertForbidden()
+            ->assertJsonPath('message', '公開デモ環境では削除できません。');
+        $this->assertNotSoftDeleted($media);
+        $this->assertDatabaseHas('media', [
+            'id' => $media->id,
+            'user_id' => $user->id,
+            'deleted_at' => null,
+        ]);
+    }
+
     public function test_owner_can_delete_media(): void
     {
         $owner = User::factory()->create();

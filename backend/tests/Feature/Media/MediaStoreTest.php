@@ -30,6 +30,28 @@ class MediaStoreTest extends TestCase
         Storage::disk('public')->assertDirectoryEmpty('media');
     }
 
+    public function test_authenticated_user_cannot_store_media_when_upload_is_disabled(): void
+    {
+        config(['features.media_upload' => false]);
+        Storage::fake('public');
+        $user = User::factory()->create();
+        Sanctum::actingAs($user);
+        $mediaCountBeforeRequest = Media::count();
+
+        $response = $this->postJson('/api/media', [
+            'file' => UploadedFile::fake()->image('animal.jpg'),
+            'category' => MediaCategory::Cat->value,
+            'taken_at' => '2026-07-15',
+            'memo' => '公園で撮影した猫',
+        ]);
+
+        $response
+            ->assertForbidden()
+            ->assertJsonPath('message', '公開デモ環境ではアップロードできません。');
+        $this->assertSame($mediaCountBeforeRequest, Media::count());
+        Storage::disk('public')->assertDirectoryEmpty('media');
+    }
+
     public function test_authenticated_user_can_store_image_media(): void
     {
         Storage::fake('public');

@@ -69,6 +69,10 @@ class MediaController extends Controller
 
     public function store(StoreMediaRequest $request): JsonResponse
     {
+        if (! config('features.media_upload')) {
+            abort(403, '公開デモ環境ではアップロードできません。');
+        }
+
         $file = $request->file('file');
         $mimeType = $file->getMimeType() ?? '';
         $type = str_starts_with($mimeType, 'video/') ? 'video' : 'image';
@@ -95,6 +99,10 @@ class MediaController extends Controller
 
     public function destroy(Request $request, Media $media): Response
     {
+        if (! config('features.media_delete')) {
+            abort(403, '公開デモ環境では削除できません。');
+        }
+
         if ($media->user_id !== $request->user()->id) {
             abort(403, '権限がありません。');
         }

@@ -142,11 +142,11 @@ return [
     |
     */
 
-    'features' => [
-        Features::registration(),
+    'features' => array_values(array_filter([
+        config('features.registration') ? Features::registration() : null,
         // Features::emailVerification(),
         Features::updateProfileInformation(),
         Features::updatePasswords(),
-    ],
+    ])),
 
 ];
