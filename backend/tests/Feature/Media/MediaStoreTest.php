@@ -146,6 +146,26 @@ class MediaStoreTest extends TestCase
         Storage::disk('public')->assertDirectoryEmpty('media');
     }
 
+    public function test_authenticated_user_cannot_store_media_with_invalid_taken_at(): void
+    {
+        Storage::fake('public');
+        $user = User::factory()->create();
+        Sanctum::actingAs($user);
+        $mediaCountBeforeRequest = Media::count();
+
+        $response = $this->postJson('/api/media', [
+            'file' => UploadedFile::fake()->image('animal.jpg'),
+            'category' => MediaCategory::Cat->value,
+            'taken_at' => 'invalid-date',
+        ]);
+
+        $response
+            ->assertUnprocessable()
+            ->assertJsonValidationErrors('taken_at');
+        $this->assertSame($mediaCountBeforeRequest, Media::count());
+        Storage::disk('public')->assertDirectoryEmpty('media');
+    }
+
     public function test_authenticated_user_cannot_store_file_exceeding_maximum_size(): void
     {
         Storage::fake('public');
