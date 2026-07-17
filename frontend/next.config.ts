@@ -1,8 +1,34 @@
 import type { NextConfig } from "next";
 
+const apiUrl = process.env.API_URL ?? "http://localhost:8000";
+
 const nextConfig: NextConfig = {
   output: "standalone",
   reactCompiler: true,
+  async rewrites() {
+    return [
+      {
+        source: "/sanctum/csrf-cookie",
+        destination: `${apiUrl}/sanctum/csrf-cookie`,
+      },
+      {
+        source: "/login",
+        destination: `${apiUrl}/login`,
+      },
+      {
+        source: "/logout",
+        destination: `${apiUrl}/logout`,
+      },
+      {
+        source: "/register",
+        destination: `${apiUrl}/register`,
+      },
+      {
+        source: "/api/:path*",
+        destination: `${apiUrl}/api/:path*`,
+      },
+    ];
+  },
   images: {
     remotePatterns: [
       {
