@@ -11,6 +11,11 @@ const nextConfig: NextConfig = {
         port: "8000",
         pathname: "/storage/**",
       },
+      {
+        protocol: "https",
+        hostname: "animal-album-backend.onrender.com",
+        pathname: "/storage/**",
+      },
     ],
     dangerouslyAllowLocalIP: process.env.NODE_ENV === "development",
   },
