@@ -1,5 +1,6 @@
 import Link from "next/link";
 import LogoutButton from "@/components/layout/LogoutButton";
+import { features } from "@/constants/features";
 import type { User } from "@/types/user";
 
 type Props = {
@@ -9,12 +10,14 @@ type Props = {
 export default function MainHeader({ user }: Props) {
   const navigation = (
     <>
-      <Link
-        href="/upload"
-        className="rounded-full bg-amber-400 px-4 py-1.5 text-center font-medium text-white hover:bg-amber-500"
-      >
-        アップロード
-      </Link>
+      {features.mediaUpload && (
+        <Link
+          href="/upload"
+          className="rounded-full bg-amber-400 px-4 py-1.5 text-center font-medium text-white hover:bg-amber-500"
+        >
+          アップロード
+        </Link>
+      )}
       <Link
         href={user ? "/mypage" : "/login"}
         className="text-gray-600 hover:text-amber-600"
@@ -28,12 +31,14 @@ export default function MainHeader({ user }: Props) {
           <Link href="/login" className="text-gray-600 hover:text-amber-600">
             ログイン
           </Link>
-          <Link
-            href="/register"
-            className="text-gray-600 hover:text-amber-600"
-          >
-            新規登録
-          </Link>
+          {features.registration && (
+            <Link
+              href="/register"
+              className="text-gray-600 hover:text-amber-600"
+            >
+              新規登録
+            </Link>
+          )}
         </>
       )}
     </>

@@ -3,6 +3,7 @@ import Link from "next/link";
 import MediaDetailPreview from "@/components/media/MediaDetailPreview";
 import DeleteMediaButton from "@/components/media/DeleteMediaButton";
 import FavoriteButton from "@/components/media/FavoriteButton";
+import { features } from "@/constants/features";
 import { categoryLabels } from "@/constants/media";
 import { fetchMediaDetailOnServer } from "@/lib/mediaServer";
 import { formatDate } from "@/lib/date";
@@ -34,7 +35,9 @@ export default async function MediaDetailPage({
         >
           ← 一覧に戻る
         </Link>
-        {canDelete && <DeleteMediaButton mediaId={media.id} />}
+        {features.mediaDelete && canDelete && (
+          <DeleteMediaButton mediaId={media.id} />
+        )}
       </div>
 
       <div className="overflow-hidden rounded-lg border border-gray-200 bg-white shadow-sm">
