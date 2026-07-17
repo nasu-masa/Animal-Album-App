@@ -92,9 +92,32 @@ export async function fetchMediaDetailOnServer(id: string): Promise<Media | null
   return toMedia(data.data);
 }
 
-export async function fetchFavoriteListOnServer(): Promise<Media[]> {
+export async function fetchMyMediaListOnServer(
+  page: number = 1,
+): Promise<MediaListResult> {
   const headers = await buildHeaders();
-  const res = await fetch(`${process.env.API_URL}/api/favorites`, {
+  const res = await fetch(`${process.env.API_URL}/api/media/mine?page=${page}`, {
+    headers,
+    cache: "no-store",
+    signal: AbortSignal.timeout(API_TIMEOUT_MS),
+  });
+
+  if (!res.ok) {
+    throw new Error(`自分の投稿一覧の取得に失敗しました (${res.status})`);
+  }
+
+  const data = (await res.json()) as ApiMediaListResponse;
+  return {
+    media: data.data.map(toMedia),
+    meta: data.meta,
+  };
+}
+
+export async function fetchFavoriteListOnServer(
+  page: number = 1,
+): Promise<MediaListResult> {
+  const headers = await buildHeaders();
+  const res = await fetch(`${process.env.API_URL}/api/favorites?page=${page}`, {
     headers,
     cache: "no-store",
     signal: AbortSignal.timeout(API_TIMEOUT_MS),
@@ -104,6 +127,9 @@ export async function fetchFavoriteListOnServer(): Promise<Media[]> {
     throw new Error(`お気に入り一覧の取得に失敗しました (${res.status})`);
   }
 
-  const data = (await res.json()) as { data: ApiMedia[] };
-  return data.data.map(toMedia);
+  const data = (await res.json()) as ApiMediaListResponse;
+  return {
+    media: data.data.map(toMedia),
+    meta: data.meta,
+  };
 }

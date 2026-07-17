@@ -16,10 +16,10 @@ export default function MainHeader({ user }: Props) {
         アップロード
       </Link>
       <Link
-        href={user ? "/favorites" : "/login"}
+        href={user ? "/mypage" : "/login"}
         className="text-gray-600 hover:text-amber-600"
       >
-        お気に入り
+        マイページ
       </Link>
       {user ? (
         <LogoutButton />

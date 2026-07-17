@@ -56,3 +56,30 @@ test("認証済みユーザーがログアウトできる", async ({ page }) => 
     page.getByRole("button", { name: "ログアウト" }),
   ).not.toBeVisible();
 });
+
+test("マイページで自分の投稿からお気に入りへ切り替えられる", async ({
+  page,
+}) => {
+  await page.goto("/login");
+
+  await page.getByLabel("メールアドレス").fill("demo@example.com");
+  await page.getByLabel("パスワード").fill("demo1234");
+  await page.getByRole("button", { name: "ログイン" }).click();
+  await expect(page).toHaveURL("/");
+
+  await page.goto("/mypage");
+
+  await expect(
+    page.getByRole("heading", { level: 1, name: "マイページ" }),
+  ).toBeVisible();
+  await expect(
+    page.getByRole("link", { name: "自分の投稿" }),
+  ).toHaveAttribute("aria-current", "page");
+
+  await page.getByRole("link", { name: "お気に入り" }).click();
+
+  await expect(page).toHaveURL("/mypage?tab=favorites");
+  await expect(
+    page.getByRole("link", { name: "お気に入り" }),
+  ).toHaveAttribute("aria-current", "page");
+});
