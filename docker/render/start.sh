@@ -29,6 +29,11 @@ if [[ ! -e public/storage && ! -L public/storage ]]; then
 fi
 
 php artisan migrate --force
+
+if [[ "${DEMO_SEED_ENABLED:-false}" == "true" ]]; then
+    php artisan db:seed --class=Database\\Seeders\\RenderDemoSeeder --force
+fi
+
 php artisan optimize
 
 php-fpm --nodaemonize &
