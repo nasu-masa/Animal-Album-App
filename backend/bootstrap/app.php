@@ -13,6 +13,9 @@ return Application::configure(basePath: dirname(__DIR__))
         health: '/up',
     )
     ->withMiddleware(function (Middleware $middleware): void {
+        // Render terminates TLS at its proxy. Trust the forwarded scheme so
+        // redirects and generated URLs keep using HTTPS.
+        $middleware->trustProxies(at: '*');
         $middleware->statefulApi();
     })
     ->withExceptions(function (Exceptions $exceptions): void {
