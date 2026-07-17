@@ -1,334 +1,86 @@
-# Animal Album
+# Animal Album App
 
-家族で動物の写真や動画を保存し、撮影日・投稿者・カテゴリなどから探して見返せるアルバム管理アプリです。
+動物の写真や動画を投稿・整理し、あとから見返せるアルバム管理アプリです。未ログインでも投稿の一覧・詳細を閲覧でき、ログインすると投稿、お気に入り登録・解除、自分の投稿の削除ができます。
 
-最初のMVPでは、家族で飼っている猫の写真・動画管理を対象としています。将来的には、ほかのペットや動物にも対応できる構成を想定しています。
+## 制作背景・目的
 
-Next.js・TypeScript・Laravelを使用し、フロントエンドからAPI、データベース、ファイル保存までの一連の開発経験を身につけることを目的として制作しています。
+スマートフォンやPC、クラウドストレージに分散しがちな動物の写真・動画を一か所にまとめ、カテゴリや撮影日から探しやすくすることを目的に制作しました。
 
-> 現在開発中です。
-> Docker開発環境とLaravelの初期設定が完了し、これからアプリケーション機能を実装します。
-
----
-
-## アプリ概要
-
-猫の写真や動画がスマートフォン、PC、クラウドストレージなどに分散し、後から見つけにくいという課題を解決するために制作しています。
-
-写真や動画を一か所へ保存し、撮影日・投稿者・カテゴリ・お気に入りなどから簡単に探して見返せる、家族向けのシンプルなアルバムを目指しています。
-
-### 想定利用者
-
-* 自分
-* 家族
-
----
-
-## MVPで検証する仮説
-
-家族は、猫の写真や動画を撮影日や投稿者などから簡単に探して見返せる専用アプリに価値を感じる。
-
-## MVPで提供する価値
-
-猫の写真や動画を一か所へ保存し、後から迷わず見つけて見返せること。
-
-## 検証方法
-
-家族に実際に利用してもらい、以下を確認します。
-
-* 写真・動画のアップロード状況
-* 日付や投稿者による絞り込みの利用状況
-* お気に入り機能の利用状況
-* 操作中に迷った箇所
-* 追加してほしい機能
-
----
-
-## 画面イメージ
-
-実装後、アプリの内容が伝わりやすい主要画面を掲載します。
-
-### メディア一覧
-
-<!-- 実装後に画像を追加 -->
-
-```markdown
-![メディア一覧](docs/images/media-list.png)
-```
-
-写真や動画、撮影日、投稿者、メモの一部を一覧で確認できます。
-
-### メディア詳細
-
-<!-- 実装後に画像を追加 -->
-
-```markdown
-![メディア詳細](docs/images/media-detail.png)
-```
-
-選択した写真・動画の撮影日、投稿者、カテゴリ、メモを確認できます。
-
-### アップロード
-
-<!-- 実装後に画像を追加 -->
-
-```markdown
-![アップロード](docs/images/media-upload.png)
-```
-
-写真・動画、撮影日、カテゴリ、メモを登録できます。
-
-### お気に入り一覧
-
-<!-- 実装後に画像を追加 -->
-
-```markdown
-![お気に入り一覧](docs/images/favorites.png)
-```
-
-自分がお気に入り登録した写真・動画を一覧で確認できます。
-
----
+Next.jsとLaravelを分離した構成で、画面、認証、API、データベース、ファイル保存、各レイヤーのテストまで一連のWebアプリケーション開発を実践することも目的としています。
 
 ## 主な機能
 
-### MVPで実装予定
-
-* [ ] ユーザー登録
-* [ ] ログイン・ログアウト
-* [ ] 写真・動画の一覧表示
-* [ ] 写真・動画の詳細表示
-* [ ] 写真・動画のアップロード
-* [ ] 撮影日の登録・表示
-* [ ] メモの登録・表示
-* [ ] カテゴリの登録・表示
-* [ ] お気に入り登録・解除
-* [ ] お気に入り一覧表示
-* [ ] 年・月・日による絞り込み
-* [ ] 投稿者による絞り込み
-* [ ] カテゴリによる絞り込み
-* [ ] 画像・動画による絞り込み
-* [ ] 新しい順・古い順の並び替え
-* [ ] 投稿者本人による削除
-* [ ] Laravel APIからのデータ取得
-* [ ] ページネーション
-* [ ] ローディング表示
-* [ ] エラー表示
-* [ ] データがない場合の空状態表示
-* [ ] スマートフォン対応
-
-### MVP完成後の改善候補
-
-* マイページ
-* 削除したメディアの復元
-* S3へのファイル保存
-* テストの拡充
-* 操作性とデザインの改善
-* 対応する動物カテゴリの拡張
-
----
+- ユーザー登録、ログイン、ログアウト
+- 写真・動画の一覧表示と詳細表示（未ログインでも閲覧可能）
+- 画像・動画のアップロード（ログイン必須）
+- カテゴリ、撮影日、メモの登録
+- 画像のEXIF情報から撮影日を取得
+- カテゴリおよび画像・動画による絞り込み
+- 撮影日の新しい順・古い順による並び替え
+- 通常一覧、自分の投稿、お気に入り一覧の20件単位のページネーション
+- お気に入り登録・解除（ログイン必須）
+- マイページで「自分の投稿」と「お気に入り」をタブ切り替えで表示（ログイン必須）
+- 投稿者本人による投稿の削除
+- ローディング、エラー、空状態の表示
+- レスポンシブ対応
 
 ## 使用技術
 
-### フロントエンド
+| 分類 | 技術 |
+| --- | --- |
+| フロントエンド | Next.js 16、React 19、TypeScript、Tailwind CSS 4、Axios |
+| バックエンド | PHP 8.4、Laravel 13、Laravel Fortify、Laravel Sanctum |
+| データベース | MySQL 8.4 |
+| Webサーバー | nginx |
+| ファイル保存 | Laravel public disk（ローカルストレージ） |
+| テスト | PHPUnit 12、Vitest 4、Testing Library、Playwright 1.61 |
+| 開発環境 | Docker、Docker Compose |
 
-* Next.js
-* React
-* TypeScript
-* Tailwind CSS
-
-### バックエンド
-
-* Laravel
-* PHP
-* Laravel Fortify
-
-### データベース
-
-* MySQL 8.4
-
-### Webサーバー
-
-* nginx
-
-### 開発環境
-
-* Docker
-* Docker Compose
-* Git
-* GitHub
-
-### 開発支援
-
-* ChatGPT
-* Claude Code
-* Codex
-
----
+依存関係の正確なバージョンは、`backend/composer.lock`と`frontend/package-lock.json`を参照してください。
 
 ## システム構成
 
 ```mermaid
 flowchart LR
-    User[利用者]
-    Frontend[Next.js / TypeScript]
-    Nginx[nginx]
-    Backend[Laravel API / PHP-FPM]
+    User[Browser]
+    Frontend[Next.js<br>:3000]
+    Nginx[nginx<br>:8000]
+    Backend[Laravel / PHP-FPM]
     Database[(MySQL)]
-    Storage[Laravel Storage]
+    Storage[(Laravel public disk)]
 
     User --> Frontend
-    Frontend --> Nginx
+    Frontend -->|HTTP / Cookie| Nginx
     Nginx --> Backend
     Backend --> Database
     Backend --> Storage
 ```
 
-### 各サービスの役割
+Docker Composeのサービスは次のとおりです。
 
-| サービス         | 役割                   |
-| ------------ | -------------------- |
-| `frontend`   | Next.jsの開発サーバー       |
-| `nginx`      | LaravelへのHTTPリクエスト受付 |
-| `backend`    | Laravel・PHP-FPMの実行   |
-| `db`         | MySQLによるデータ保存        |
-| `phpmyadmin` | ブラウザからのDB確認          |
+| サービス | 役割 |
+| --- | --- |
+| `frontend` | Next.js開発サーバー |
+| `nginx` | Laravel APIと保存ファイルへのHTTPリクエスト受付 |
+| `backend` | Laravel / PHP-FPM |
+| `db` | MySQL |
+| `phpmyadmin` | ローカルDB確認用UI |
+| `playwright` | ChromiumによるE2Eテスト |
 
----
+認証にはFortifyとSanctumのCookieベース認証を使用しています。一覧・詳細APIは公開し、投稿・削除・お気に入りAPIは認証必須にしています。
 
-## ディレクトリ構成
+## ローカル環境構築
 
-```text
-Animal-Album-App/
-├── backend/                  # Laravel
-├── frontend/                 # Next.js
-├── docker/
-│   ├── frontend/
-│   │   └── Dockerfile
-│   ├── mysql/
-│   │   └── my.cnf
-│   ├── nginx/
-│   │   └── default.conf
-│   └── php/
-│       ├── Dockerfile
-│       └── php.ini
-├── docs/                     # 設計資料
-├── docker-compose.yml
-├── .env.example
-└── README.md
-```
+### 前提
 
----
+- Git
+- Docker
+- Docker Compose
 
-## データベース設計
-
-MVPでは、主に以下のテーブルを使用する予定です。
-
-```mermaid
-erDiagram
-    USERS ||--o{ MEDIA : uploads
-    USERS ||--o{ FAVORITES : adds
-    MEDIA ||--o{ FAVORITES : receives
-
-    USERS {
-        bigint id PK
-        string name
-        string email
-        string password
-        datetime created_at
-        datetime updated_at
-    }
-
-    MEDIA {
-        bigint id PK
-        bigint user_id FK
-        string type
-        string file_path
-        string category
-        datetime taken_at
-        text memo
-        datetime created_at
-        datetime updated_at
-        datetime deleted_at
-    }
-
-    FAVORITES {
-        bigint id PK
-        bigint user_id FK
-        bigint media_id FK
-        datetime created_at
-        datetime updated_at
-    }
-```
-
-### 主なテーブル
-
-#### users
-
-ユーザー情報を管理します。
-
-#### media
-
-アップロードされた写真・動画と、撮影日、カテゴリ、メモなどを管理します。
-
-#### favorites
-
-ユーザーがお気に入り登録したメディアを管理します。
-
-詳しい設計資料は以下に掲載します。
-
-* [ER図](docs/database/er-diagram.md)
-* [テーブル仕様書](docs/database/table-spec.md)
-
----
-
-## API
-
-以下はMVPで実装予定のAPIです。
-
-### 認証
-
-| メソッド   | URL         | 内容     |
-| ------ | ----------- | ------ |
-| `POST` | `/register` | ユーザー登録 |
-| `POST` | `/login`    | ログイン   |
-| `POST` | `/logout`   | ログアウト  |
-
-### メディア
-
-| メソッド     | URL               | 内容        |
-| -------- | ----------------- | --------- |
-| `GET`    | `/api/media`      | メディア一覧の取得 |
-| `POST`   | `/api/media`      | メディアの投稿   |
-| `GET`    | `/api/media/{id}` | メディア詳細の取得 |
-| `DELETE` | `/api/media/{id}` | メディアの削除   |
-
-### お気に入り
-
-| メソッド     | URL                        | 内容         |
-| -------- | -------------------------- | ---------- |
-| `POST`   | `/api/media/{id}/favorite` | お気に入り登録    |
-| `DELETE` | `/api/media/{id}/favorite` | お気に入り解除    |
-| `GET`    | `/api/favorites`           | お気に入り一覧の取得 |
-
-APIの詳細なリクエスト・レスポンスは、実装に合わせて別の設計資料へ記載します。
-
----
-
-## 環境構築
-
-### 前提環境
-
-以下がインストールされていることを前提とします。
-
-* Git
-* Docker
-* Docker Compose
-
-### 1. リポジトリをクローン
+### 1. リポジトリを取得
 
 ```bash
-git clone <リポジトリURL>
+git clone git@github.com:nasu-masa/Animal-Album-App.git
 cd Animal-Album-App
 ```
 
@@ -336,43 +88,19 @@ cd Animal-Album-App
 
 ```bash
 cp .env.example .env
-cp frontend/.env.example frontend/.env.local
 cp backend/.env.example backend/.env
+cp frontend/.env.example frontend/.env.local
 ```
 
-各ファイルの用途は以下のとおりです。
+各exampleファイルにはローカル開発用の設定例が含まれています。
 
-| ファイル                  | 用途                             |
-| --------------------- | ------------------------------ |
-| `.env`                | Docker Compose・MySQLの設定        |
-| `frontend/.env.local` | Next.jsからLaravel APIへ接続するための設定 |
-| `backend/.env`        | Laravelのアプリケーション・DB接続設定        |
+| ファイル | 主な用途 |
+| --- | --- |
+| `.env` | Docker ComposeからMySQLへ渡すDB名・ユーザー情報 |
+| `backend/.env` | Laravel、DB接続、セッション、ファイルシステムなど |
+| `frontend/.env.local` | ブラウザからアクセスするLaravel APIのURL |
 
-`.env`にはローカル開発用の値を設定します。
-
-```env
-MYSQL_DATABASE=animal_album_app
-MYSQL_USER=app
-MYSQL_PASSWORD=secret
-MYSQL_ROOT_PASSWORD=root
-```
-
-`frontend/.env.local`にはLaravel APIのURLを設定します。
-
-```env
-NEXT_PUBLIC_API_URL=http://localhost:8000
-```
-
-`backend/.env`のDB接続設定は以下のようにします。
-
-```env
-DB_CONNECTION=mysql
-DB_HOST=db
-DB_PORT=3306
-DB_DATABASE=animal_album_app
-DB_USERNAME=app
-DB_PASSWORD=secret
-```
+`backend/.env`の`APP_KEY`は後述の`key:generate`で生成します。exampleにない秘密鍵や本番環境の認証情報をREADMEへ記載しないでください。
 
 ### 3. Laravelの書き込み権限を設定（Linux / WSL）
 
@@ -380,79 +108,177 @@ DB_PASSWORD=secret
 sudo ./setup-permissions.sh
 ```
 
-Laravelはホストからbind mountした`backend/storage`と`backend/bootstrap/cache`へ書き込みます。
-PHP-FPMはコンテナ内の`www-data`（GID 33）で動作するため、初回起動前にこのスクリプトを実行してください。
+bind mountする`backend/storage`と`backend/bootstrap/cache`を、コンテナ内の`www-data`が書き込める状態にします。Docker Desktopなど権限の扱いが異なる環境では、ホスト環境に合わせた調整が必要になる場合があります。
 
-スクリプトは所有者をホストユーザーのまま維持し、グループをGID 33へ変更してグループ書き込みを許可します。
-ディレクトリには`2775`（setgidを含む）、ファイルには`0664`を設定します。
-
-> macOSなど、ホスト側でGID 33が別の用途に割り当てられている環境や、Docker Desktopのbind mountがLinuxと異なる権限変換を行う環境では、この固定GIDが適合しない可能性があります。この手順はLinux / WSL向けです。macOSでbackendコンテナが書き込み不可として停止する場合は、GIDを固定せずホスト環境へ合わせる構成を別途検討してください。
-
-### 4. Dockerイメージをビルドして起動
+### 4. コンテナをビルドして起動
 
 ```bash
-docker compose up -d --build
-```
-
-コンテナの状態を確認します。
-
-```bash
+docker compose up -d --build frontend phpmyadmin
 docker compose ps
 ```
+
+`playwright`サービスはE2Eテスト実行用のため、通常起動には含めません。依存関係により`db`、`backend`、`nginx`も起動します。
 
 ### 5. Laravelをセットアップ
 
 ```bash
 docker compose exec backend composer install
 docker compose exec backend php artisan key:generate
-docker compose exec backend php artisan migrate
+docker compose exec backend php artisan migrate --seed
 docker compose exec backend php artisan storage:link
 ```
 
-マイグレーション状況は、以下のコマンドで確認できます。
+`storage:link`は必要です。Seederとアップロード機能は`storage/app/public`へファイルを保存し、nginxは`public/storage`経由で配信します。
+
+既存データを削除して初期状態へ戻す場合は、次を実行します。
 
 ```bash
-docker compose exec backend php artisan migrate:status
+docker compose exec backend php artisan migrate:fresh --seed
 ```
 
-### 6. 動作確認
+> `migrate:fresh`は全テーブルを削除して再作成します。必要なデータがないことを確認してから実行してください。
 
-ブラウザから以下へアクセスします。
+### 6. アクセス
 
-| 内容         | URL                     |
-| ---------- | ----------------------- |
-| フロントエンド    | `http://localhost:3000` |
-| Laravel    | `http://localhost:8000` |
+| 内容 | URL |
+| --- | --- |
+| フロントエンド | `http://localhost:3000` |
+| Laravel API | `http://localhost:8000` |
 | phpMyAdmin | `http://localhost:8080` |
 
-### 7. コンテナを停止
+### 7. 停止
 
 ```bash
 docker compose down
 ```
 
-DBデータも含めて削除する場合は、以下を実行します。
+MySQLのDocker volumeも削除する場合のみ、`docker compose down -v`を使用してください。
 
-```bash
-docker compose down -v
+## 初期データとSeeder
+
+`DatabaseSeeder`は次の順にSeederを実行します。
+
+1. `UserSeeder`：デモユーザーを含む5ユーザーを作成
+2. `MediaSeeder`：画像23件・動画2件をpublic diskへコピーし、メディア情報を作成
+3. `FavoriteSeeder`：デモユーザーのお気に入り4件を作成
+
+Seeder用ファイルは次の場所に含まれています。
+
+```text
+backend/database/seeders/assets/media/
+├── images/
+└── videos/
 ```
 
-> `-v`を付けるとMySQLのデータも削除されます。
+`MediaSeeder`がこれらを`storage/app/public/media/seed/`へコピーするため、手作業でのコピーは不要です。ファイルが不足している場合はSeederが例外を返します。ブラウザから表示するには、環境構築時の`php artisan storage:link`を実行してください。
 
----
+### テスト用ユーザー
+
+ローカルで`--seed`を実行した後、次のユーザーでログインできます。
+
+| 名前 | メールアドレス | パスワード |
+| --- | --- | --- |
+| Demo User | `demo@example.com` | `demo1234` |
+
+これはリポジトリ内のSeederで定義されたローカル・デモ用アカウントです。本番用の秘密情報ではなく、本番環境の管理者認証情報として使用しないでください。
+
+## テスト
+
+### Laravel / PHPUnit
+
+PHPUnitはインメモリSQLiteを使用するため、ローカルのMySQLデータを変更しません。
+
+```bash
+docker compose exec backend php artisan test
+```
+
+PHPUnitを直接実行する場合：
+
+```bash
+docker compose exec backend ./vendor/bin/phpunit
+```
+
+### Vitest
+
+```bash
+docker compose exec frontend npm run test:unit
+```
+
+### Playwright
+
+アプリを起動し、マイグレーションとSeederを完了した状態で実行します。
+
+```bash
+docker compose run --rm playwright
+```
+
+PlaywrightはChromiumを使用し、ログイン、新規登録、一覧から詳細への遷移、マイページのタブ切り替えを確認します。
+新規登録テストは実行のたびに一意なメールアドレスのユーザーをDBへ作成します。必要に応じて`migrate:fresh --seed`で初期化してください。
+
+### フロントエンドのその他の確認
+
+現在のnpm scriptsは`dev`、`build`、`start`、`lint`、`test:unit`、`test:e2e`です。
+
+```bash
+docker compose exec frontend npm run lint
+docker compose exec frontend npx tsc --noEmit
+```
+
+ホスト側に依存関係とPlaywrightブラウザを用意している場合は、`frontend`ディレクトリで`npm run test:e2e`も実行できます。
+
+## ディレクトリ構成
+
+```text
+Animal-Album-App/
+├── backend/
+│   ├── app/                 # API、Form Request、Model、認証処理
+│   ├── database/            # Migration、Factory、Seeder、初期メディア
+│   ├── routes/              # Laravelのルート定義
+│   └── tests/               # PHPUnitのUnit / Featureテスト
+├── frontend/
+│   ├── src/app/             # Next.js App Routerのページ
+│   ├── src/components/      # UIコンポーネント
+│   ├── src/lib/             # API通信、認証、EXIF処理
+│   └── e2e/                 # Playwrightテスト
+├── docker/                  # PHP、nginx、MySQL、Next.jsの設定
+├── docker-compose.yml
+└── README.md
+```
+
+## 設計・実装上の工夫
+
+- Next.jsとLaravel APIの責務を分離し、サーバー側取得とブラウザ側操作で共通のAPIを利用
+- SanctumのCookie認証とCSRF Cookieを使用し、認証が必要なAPIを保護
+- 一覧・詳細は公開し、投稿、削除、お気に入りは認証必須にするアクセス制御
+- 削除は投稿者本人だけに許可し、レコードにはソフトデリートを採用
+- MIMEタイプ、100MB上限、カテゴリ、撮影日、メモ長をLaravel側で検証
+- アップロード時にランダムな保存ファイル名を利用し、元のファイル名を公開パスに使用しない
+- 一覧の絞り込み・並び替え・ページ番号をURLクエリとして保持
+- PHPUnitのFeatureテスト、Vitestのコンポーネントテスト、Playwrightの主要動線テストを用途別に配置
+- Seeder用ファイルの存在確認後にコピーし、不完全な初期データ作成を検知
+
+## 公開デモ環境で予定している制限
+
+デプロイ先は未確定で、以下は公開時の予定です。ローカル環境では新規登録、アップロード、削除を含む全機能を利用できます。
+
+| 操作 | 公開デモでの予定 |
+| --- | --- |
+| 一覧・詳細の閲覧 | 未ログインでも利用可能 |
+| 新規登録 | 停止 |
+| ログイン | デモアカウントで利用可能 |
+| お気に入り登録・解除 | デモアカウントで利用可能 |
+| アップロード | 停止 |
+| 削除 | 停止 |
+
+これは機能不足による制限ではなく、不特定多数によるストレージ悪用と共有デモデータの破壊を防ぐための意図的な運用方針です。制限の具体的な実装方法や公開URLは、デプロイ先の決定後に確定します。
 
 ## 今後の改善
 
-MVP完成後、利用状況やフィードバックをもとに改善します。
-
-* S3へのファイル保存
-* 削除したメディアの復元
-* テストの拡充
-* CIの導入
-* 操作性とデザインの改善
-
----
-
-## 制作者
-
-* GitHub：`https://github.com/nasu-masa
+- 公開デモ向けの新規登録・アップロード・削除制限
+- デプロイと公開環境での動作確認
+- メールアドレス認証と認証メール再送
+- アップロードのレート制限、ユーザー単位の件数・容量制限、ストレージ監視
+- S3などのオブジェクトストレージ対応
+- 削除済みメディアの復元と、不要ファイルのライフサイクル管理
+- CIによる自動テスト・静的解析
+- テストケース、アクセシビリティ、UIの改善
