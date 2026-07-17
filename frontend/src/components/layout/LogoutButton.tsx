@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { usePathname, useRouter } from "next/navigation";
+import { usePathname } from "next/navigation";
 import { logout } from "@/lib/auth";
 
 export default function LogoutButton() {
@@ -11,7 +11,6 @@ export default function LogoutButton() {
 }
 
 function LogoutButtonForRoute() {
-  const router = useRouter();
   const [LoggingOut, setLoggingOut] = useState(false);
   const [error, setError] = useState("");
 
@@ -21,8 +20,7 @@ function LogoutButtonForRoute() {
 
     try {
       await logout();
-      router.replace("/");
-      router.refresh();
+      window.location.replace("/");
     } catch (e) {
       setError(
         e instanceof Error

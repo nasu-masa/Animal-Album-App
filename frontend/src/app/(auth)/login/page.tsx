@@ -2,14 +2,12 @@
 
 import { useState } from "react";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
 
 import { login, LoginValidationError } from "@/lib/auth";
 import AuthInput from "@/components/auth/AuthInput";
 import SubmitButton from "@/components/auth/SubmitButton";
 
 export default function LoginPage() {
-  const router = useRouter();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [submitting, setSubmitting] = useState(false);
@@ -24,8 +22,7 @@ export default function LoginPage() {
 
     try {
       await login(email, password);
-      router.replace("/");
-      router.refresh();
+      window.location.replace("/");
     } catch (error) {
       if (error instanceof LoginValidationError) {
         const first: Record<string, string> = {};
