@@ -15,7 +15,12 @@ sed "s/\${PORT}/${PORT}/g" \
 
 cd /var/www/html
 
-mkdir -p storage bootstrap/cache
+mkdir -p \
+    storage/framework/cache \
+    storage/framework/sessions \
+    storage/framework/views \
+    storage/logs \
+    bootstrap/cache
 chown -R www-data:www-data storage bootstrap/cache
 chmod -R ug+rwX storage bootstrap/cache
 
