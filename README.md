@@ -2,6 +2,10 @@
 
 動物の写真や動画を投稿・整理し、あとから見返せるアルバム管理アプリです。未ログインでも投稿の一覧・詳細を閲覧でき、ログインすると投稿、お気に入り登録・解除、自分の投稿の削除ができます。
 
+## 公開デモサイト
+
+[Animal Album App](https://animal-album-frontend.onrender.com/)
+
 ## 制作背景・目的
 
 スマートフォンやPC、クラウドストレージに分散しがちな動物の写真・動画を一か所にまとめ、カテゴリや撮影日から探しやすくすることを目的に制作しました。
@@ -23,6 +27,16 @@ Next.jsとLaravelを分離した構成で、画面、認証、API、データベ
 - 投稿者本人による投稿の削除
 - ローディング、エラー、空状態の表示
 - レスポンシブ対応
+
+## 画面設計
+
+| メディア一覧 | メディア詳細 |
+| --- | --- |
+| ![メディア一覧](docs/screens/design/medialist.png) | ![メディア詳細](docs/screens/design/mediashow.png) |
+
+| ログイン | マイページ |
+| --- | --- |
+| ![ログイン](docs/screens/design/login.png) | ![マイページ](docs/screens/design/mypage.png) |
 
 ## 使用技術
 
@@ -118,6 +132,12 @@ docker compose ps
 ```
 
 `playwright`サービスはE2Eテスト実行用のため、通常起動には含めません。依存関係により`db`、`backend`、`nginx`も起動します。
+
+既存環境で`frontend/package-lock.json`が更新された場合は、名前付きvolume内の依存関係を再同期します。
+
+```bash
+docker compose exec frontend npm ci
+```
 
 ### 5. Laravelをセットアップ
 
