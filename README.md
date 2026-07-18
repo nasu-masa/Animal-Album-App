@@ -2,17 +2,21 @@
 
 動物の写真や動画を投稿・整理し、あとから見返せるアルバム管理アプリです。未ログインでも投稿の一覧・詳細を閲覧でき、ログインすると投稿、お気に入り登録・解除、自分の投稿の削除ができます。
 
-## 公開デモサイト
+## ◎ 公開デモサイト
 
 [Animal Album App](https://animal-album-frontend.onrender.com/)
 
-## 制作背景・目的
+---
+
+## ◎ 制作背景・目的
 
 スマートフォンやPC、クラウドストレージに分散しがちな動物の写真・動画を一か所にまとめ、カテゴリや撮影日から探しやすくすることを目的に制作しました。
 
 Next.jsとLaravelを分離した構成で、画面、認証、API、データベース、ファイル保存、各レイヤーのテストまで一連のWebアプリケーション開発を実践することも目的としています。
 
-## 主な機能
+---
+
+## ◎ 主な機能
 
 - ユーザー登録、ログイン、ログアウト
 - 写真・動画の一覧表示と詳細表示（未ログインでも閲覧可能）
@@ -28,7 +32,9 @@ Next.jsとLaravelを分離した構成で、画面、認証、API、データベ
 - ローディング、エラー、空状態の表示
 - レスポンシブ対応
 
-## 画面設計
+---
+
+## ◎ 画面設計
 
 | メディア一覧 | メディア詳細 |
 | --- | --- |
@@ -38,7 +44,9 @@ Next.jsとLaravelを分離した構成で、画面、認証、API、データベ
 | --- | --- |
 | ![ログイン](docs/screens/design/login.png) | ![マイページ](docs/screens/design/mypage.png) |
 
-## 使用技術
+---
+
+## ◎ 使用技術
 
 | 分類 | 技術 |
 | --- | --- |
@@ -52,7 +60,9 @@ Next.jsとLaravelを分離した構成で、画面、認証、API、データベ
 
 依存関係の正確なバージョンは、`backend/composer.lock`と`frontend/package-lock.json`を参照してください。
 
-## システム構成
+---
+
+## ◎ システム構成
 
 ```mermaid
 flowchart LR
@@ -83,11 +93,13 @@ Docker Composeのサービスは次のとおりです。
 
 認証にはFortifyとSanctumのCookieベース認証を使用しています。一覧・詳細APIは公開し、投稿・削除・お気に入りAPIは認証必須にしています。
 
-## データベース設計
+---
+
+## ◎ データベース設計
 
 以下は、アプリケーションの主要3テーブルを示しています。Laravelがセッション、キャッシュ、キューおよびAPIトークンの管理に使用する補助テーブルについては後述します。
 
-### ER図
+### ◆ ER図
 
 ```mermaid
 erDiagram
@@ -129,7 +141,7 @@ erDiagram
     }
 ```
 
-### テーブル仕様
+### ◆ テーブル仕様
 
 #### `users`
 
@@ -182,14 +194,14 @@ erDiagram
 
 `user_id`と`media_id`の組み合わせにはUNIQUE制約を設定し、同じユーザーによる同じ投稿への重複登録を防いでいます。各外部キーはそれぞれ`users.id`と`media.id`を参照し、参照先を削除した場合は関連するお気に入りも削除されます。
 
-### リレーション
+### ◆ リレーション
 
 - 1人のユーザーは複数のメディアを投稿できます。
 - 1人のユーザーは複数のメディアをお気に入り登録できます。
 - 1件のメディアは複数のユーザーからお気に入り登録されます。
 - メディアはソフトデリートを使用し、通常の削除時もデータベース上にレコードを保持します。
 
-### 補助テーブル
+### ◆ 補助テーブル
 
 Laravelの各機能により、主要3テーブル以外に次のテーブルも作成されます。
 
@@ -200,22 +212,24 @@ Laravelの各機能により、主要3テーブル以外に次のテーブルも
 | `cache`、`cache_locks` | キャッシュと排他制御 |
 | `jobs`、`job_batches`、`failed_jobs` | キューと失敗ジョブ |
 
-## ローカル環境構築
+---
 
-### 前提
+## ◎ ローカル環境構築
+
+### ◆ 前提
 
 - Git
 - Docker
 - Docker Compose
 
-### 1. リポジトリを取得
+### ◆ 1. リポジトリを取得
 
 ```bash
 git clone git@github.com:nasu-masa/Animal-Album-App.git
 cd Animal-Album-App
 ```
 
-### 2. 環境変数を作成
+### ◆ 2. 環境変数を作成
 
 ```bash
 cp .env.example .env
@@ -233,7 +247,7 @@ cp frontend/.env.example frontend/.env.local
 
 `backend/.env`の`APP_KEY`は後述の`key:generate`で生成します。exampleにない秘密鍵や本番環境の認証情報をREADMEへ記載しないでください。
 
-### 3. Laravelの書き込み権限を設定（Linux / WSL）
+### ◆ 3. Laravelの書き込み権限を設定（Linux / WSL）
 
 ```bash
 sudo ./setup-permissions.sh
@@ -241,7 +255,7 @@ sudo ./setup-permissions.sh
 
 bind mountする`backend/storage`と`backend/bootstrap/cache`を、コンテナ内の`www-data`が書き込める状態にします。Docker Desktopなど権限の扱いが異なる環境では、ホスト環境に合わせた調整が必要になる場合があります。
 
-### 4. コンテナをビルドして起動
+### ◆ 4. コンテナをビルドして起動
 
 ```bash
 docker compose up -d --build frontend phpmyadmin
@@ -256,7 +270,7 @@ docker compose ps
 docker compose exec frontend npm ci
 ```
 
-### 5. Laravelをセットアップ
+### ◆ 5. Laravelをセットアップ
 
 ```bash
 docker compose exec backend composer install
@@ -275,7 +289,7 @@ docker compose exec backend php artisan migrate:fresh --seed
 
 > `migrate:fresh`は全テーブルを削除して再作成します。必要なデータがないことを確認してから実行してください。
 
-### 6. アクセス
+### ◆ 6. アクセス
 
 | 内容 | URL |
 | --- | --- |
@@ -283,7 +297,7 @@ docker compose exec backend php artisan migrate:fresh --seed
 | Laravel API | `http://localhost:8000` |
 | phpMyAdmin | `http://localhost:8080` |
 
-### 7. 停止
+### ◆ 7. 停止
 
 ```bash
 docker compose down
@@ -291,7 +305,9 @@ docker compose down
 
 MySQLのDocker volumeも削除する場合のみ、`docker compose down -v`を使用してください。
 
-## 初期データとSeeder
+---
+
+## ◎ 初期データとSeeder
 
 `DatabaseSeeder`は次の順にSeederを実行します。
 
@@ -309,7 +325,7 @@ backend/database/seeders/assets/media/
 
 `MediaSeeder`がこれらを`storage/app/public/media/seed/`へコピーするため、手作業でのコピーは不要です。ファイルが不足している場合はSeederが例外を返します。ブラウザから表示するには、環境構築時の`php artisan storage:link`を実行してください。
 
-### ローカル開発用Seederユーザー
+### ◆ ローカル開発用Seederユーザー
 
 ローカルで`--seed`を実行した後、次のユーザーでログインできます。
 
@@ -319,13 +335,15 @@ backend/database/seeders/assets/media/
 
 この認証情報はローカル開発専用であり、公開デモでは使用しません。本番環境の認証情報としても使用しないでください。
 
-### 公開デモ用認証情報
+### ◆ 公開デモ用認証情報
 
 公開デモ環境の認証情報はREADMEには記載せず、必要に応じて個別に案内します。
 
-## テスト
+---
 
-### Laravel / PHPUnit
+## ◎ テスト
+
+### ◆ Laravel / PHPUnit
 
 PHPUnitはインメモリSQLiteを使用するため、ローカルのMySQLデータを変更しません。
 
@@ -339,13 +357,13 @@ PHPUnitを直接実行する場合：
 docker compose exec backend ./vendor/bin/phpunit
 ```
 
-### Vitest
+### ◆ Vitest
 
 ```bash
 docker compose exec frontend npm run test:unit
 ```
 
-### Playwright
+### ◆ Playwright
 
 アプリを起動し、マイグレーションとSeederを完了した状態で実行します。
 
@@ -356,7 +374,7 @@ docker compose run --rm playwright
 PlaywrightはChromiumを使用し、ログイン、新規登録、一覧から詳細への遷移、マイページのタブ切り替えを確認します。
 新規登録テストは実行のたびに一意なメールアドレスのユーザーをDBへ作成します。必要に応じて`migrate:fresh --seed`で初期化してください。
 
-### フロントエンドのその他の確認
+### ◆ フロントエンドのその他の確認
 
 現在のnpm scriptsは`dev`、`build`、`start`、`lint`、`test:unit`、`test:e2e`です。
 
@@ -367,7 +385,9 @@ docker compose exec frontend npx tsc --noEmit
 
 ホスト側に依存関係とPlaywrightブラウザを用意している場合は、`frontend`ディレクトリで`npm run test:e2e`も実行できます。
 
-## ディレクトリ構成
+---
+
+## ◎ ディレクトリ構成
 
 ```text
 Animal-Album-App/
@@ -386,7 +406,9 @@ Animal-Album-App/
 └── README.md
 ```
 
-## 設計・実装上の工夫
+---
+
+## ◎ 設計・実装上の工夫
 
 - Next.jsとLaravel APIの責務を分離し、サーバー側取得とブラウザ側操作で共通のAPIを利用
 - SanctumのCookie認証とCSRF Cookieを使用し、認証が必要なAPIを保護
@@ -398,7 +420,9 @@ Animal-Album-App/
 - PHPUnitのFeatureテスト、Vitestのコンポーネントテスト、Playwrightの主要動線テストを用途別に配置
 - Seeder用ファイルの存在確認後にコピーし、不完全な初期データ作成を検知
 
-## 公開デモ環境の制限
+---
+
+## ◎ 公開デモ環境の制限
 
 公開デモ環境では共有データとストレージを保護するため、新規登録、アップロード、削除を無効にします。ローカル環境ではこれらを含む全機能を利用できます。
 
@@ -430,7 +454,9 @@ NEXT_PUBLIC_MEDIA_UPLOAD_ENABLED=false
 NEXT_PUBLIC_MEDIA_DELETE_ENABLED=false
 ```
 
-## 今後の改善
+---
+
+## ◎ 今後の改善
 
 - メールアドレス認証と認証メール再送
 - アップロードのレート制限、ユーザー単位の件数・容量制限、ストレージ監視
