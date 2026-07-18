@@ -6,6 +6,7 @@ import Link from "next/link";
 import { login, LoginValidationError } from "@/lib/auth";
 import AuthInput from "@/components/auth/AuthInput";
 import SubmitButton from "@/components/auth/SubmitButton";
+import { features } from "@/constants/features";
 
 export default function LoginPage() {
   const [email, setEmail] = useState("");
@@ -96,12 +97,17 @@ export default function LoginPage() {
             disabled={submitting}
           />
 
-          <p className="mt-6 text-center text-sm text-gray-500">
-            アカウントをお持ちでない方はこちら
-            <Link href="/register" className="ml-1 text-amber-600 hover:underline">
-              新規登録
-            </Link>
-          </p>
+          {features.registration && (
+            <p className="mt-6 text-center text-sm text-gray-500">
+              アカウントをお持ちでない方はこちら
+              <Link
+                href="/register"
+                className="ml-1 text-amber-600 hover:underline"
+              >
+                新規登録
+              </Link>
+            </p>
+          )}
         </form>
       </div>
     </main>
