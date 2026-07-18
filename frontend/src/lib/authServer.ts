@@ -1,7 +1,7 @@
 import "server-only";
 import { cache } from "react";
 import { cookies } from "next/headers";
-import { API_TIMEOUT_MS } from "@/constants/api";
+import { fetchApiOnServer } from "@/lib/serverFetch";
 import type { User } from "@/types/user";
 
 export type PublicUserResult =
@@ -17,7 +17,7 @@ export const getUserOnServer = cache(async (): Promise<User | null> => {
     .join("; ");
   const frontendUrl = process.env.FRONTEND_URL ?? "http://localhost:3000";
 
-  const res = await fetch(`${process.env.API_URL}/api/user`, {
+  const res = await fetchApiOnServer(`${process.env.API_URL}/api/user`, {
     headers: {
       Accept: "application/json",
       Cookie: cookieHeader,
@@ -25,7 +25,6 @@ export const getUserOnServer = cache(async (): Promise<User | null> => {
       Referer: `${frontendUrl}/`,
     },
     cache: "no-store",
-    signal: AbortSignal.timeout(API_TIMEOUT_MS),
   });
 
   if (res.status === 401) {

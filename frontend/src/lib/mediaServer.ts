@@ -1,6 +1,6 @@
 import "server-only";
 import { cookies } from "next/headers";
-import { API_TIMEOUT_MS } from "@/constants/api";
+import { fetchApiOnServer } from "@/lib/serverFetch";
 import type {
   ApiMedia,
   ApiMediaListResponse,
@@ -52,12 +52,11 @@ export async function fetchMediaListOnServer(
   }
   const qs = searchParams.toString();
 
-  const res = await fetch(
+  const res = await fetchApiOnServer(
     `${process.env.API_URL}/api/media${qs ? `?${qs}` : ""}`,
     {
       headers,
       cache: "no-store",
-      signal: AbortSignal.timeout(API_TIMEOUT_MS),
     },
   );
 
@@ -74,10 +73,9 @@ export async function fetchMediaListOnServer(
 
 export async function fetchMediaDetailOnServer(id: string): Promise<Media | null> {
   const headers = await buildHeaders();
-  const res = await fetch(`${process.env.API_URL}/api/media/${id}`, {
+  const res = await fetchApiOnServer(`${process.env.API_URL}/api/media/${id}`, {
     headers,
     cache: "no-store",
-    signal: AbortSignal.timeout(API_TIMEOUT_MS),
   });
 
   if (res.status === 404) {
@@ -96,11 +94,13 @@ export async function fetchMyMediaListOnServer(
   page: number = 1,
 ): Promise<MediaListResult> {
   const headers = await buildHeaders();
-  const res = await fetch(`${process.env.API_URL}/api/media/mine?page=${page}`, {
-    headers,
-    cache: "no-store",
-    signal: AbortSignal.timeout(API_TIMEOUT_MS),
-  });
+  const res = await fetchApiOnServer(
+    `${process.env.API_URL}/api/media/mine?page=${page}`,
+    {
+      headers,
+      cache: "no-store",
+    },
+  );
 
   if (!res.ok) {
     throw new Error(`自分の投稿一覧の取得に失敗しました (${res.status})`);
@@ -117,11 +117,13 @@ export async function fetchFavoriteListOnServer(
   page: number = 1,
 ): Promise<MediaListResult> {
   const headers = await buildHeaders();
-  const res = await fetch(`${process.env.API_URL}/api/favorites?page=${page}`, {
-    headers,
-    cache: "no-store",
-    signal: AbortSignal.timeout(API_TIMEOUT_MS),
-  });
+  const res = await fetchApiOnServer(
+    `${process.env.API_URL}/api/favorites?page=${page}`,
+    {
+      headers,
+      cache: "no-store",
+    },
+  );
 
   if (!res.ok) {
     throw new Error(`お気に入り一覧の取得に失敗しました (${res.status})`);
