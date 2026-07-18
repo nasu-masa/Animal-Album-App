@@ -1,6 +1,7 @@
 import "server-only";
 import { cache } from "react";
 import { cookies } from "next/headers";
+import { unstable_rethrow } from "next/navigation";
 import { fetchApiOnServer } from "@/lib/serverFetch";
 import type { User } from "@/types/user";
 
@@ -46,6 +47,7 @@ export const getUserForPublicPageOnServer = cache(
         ? { status: "unauthenticated", user: null }
         : { status: "authenticated", user };
     } catch (error) {
+      unstable_rethrow(error);
       console.error("ページ用の認証情報を取得できませんでした。", error);
       return { status: "unavailable", user: null };
     }
