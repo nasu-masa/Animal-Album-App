@@ -2,15 +2,15 @@
 
 type Props = {
   error: Error & { digest?: string };
-  reset: () => void;
+  unstable_retry: () => void;
 };
 
-export default function MediaError({ error, reset }: Props) {
+export default function HomeError({ error, unstable_retry }: Props) {
   return (
     <main className="mx-auto flex w-full max-w-6xl flex-col items-center px-4 py-16 text-center">
       <p className="mb-4 text-gray-700">一覧の読み込みに失敗しました</p>
       <button
-        onClick={reset}
+        onClick={unstable_retry}
         className="rounded-full bg-amber-400 px-5 py-2 text-sm font-medium text-white hover:bg-amber-500"
       >
         再試行
