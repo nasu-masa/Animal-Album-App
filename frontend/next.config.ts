@@ -5,6 +5,7 @@ const apiUrl = process.env.API_URL ?? "http://localhost:8000";
 const nextConfig: NextConfig = {
   output: "standalone",
   reactCompiler: true,
+  devIndicators: false,
   async rewrites() {
     return [
       {

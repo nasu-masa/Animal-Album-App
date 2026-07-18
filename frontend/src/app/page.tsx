@@ -4,6 +4,7 @@ import { redirect } from "next/navigation";
 import MediaCard from "@/components/media/MediaCard";
 import MediaFilterBar from "@/components/media/MediaFilterBar";
 import MediaPagination from "@/components/media/MediaPagination";
+import { features } from "@/constants/features";
 import { categoryLabels } from "@/constants/media";
 import { fetchMediaListOnServer } from "@/lib/mediaServer";
 import { getUserForPublicPageOnServer } from "@/lib/authServer";
@@ -87,9 +88,14 @@ export default async function Home({
           ) : (
             <>
               <p className="mb-4 text-gray-700">まだ写真や動画がありません</p>
-              <Link href="/upload" className="text-sm text-amber-600 hover:underline">
-                アップロードする
-              </Link>
+              {features.mediaUpload && (
+                <Link
+                  href="/upload"
+                  className="text-sm text-amber-600 hover:underline"
+                >
+                  アップロードする
+                </Link>
+              )}
             </>
           )}
         </div>
