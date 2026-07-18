@@ -83,6 +83,123 @@ Docker Composeのサービスは次のとおりです。
 
 認証にはFortifyとSanctumのCookieベース認証を使用しています。一覧・詳細APIは公開し、投稿・削除・お気に入りAPIは認証必須にしています。
 
+## データベース設計
+
+以下は、アプリケーションの主要3テーブルを示しています。Laravelがセッション、キャッシュ、キューおよびAPIトークンの管理に使用する補助テーブルについては後述します。
+
+### ER図
+
+```mermaid
+erDiagram
+    USERS ||--o{ MEDIA : posts
+    USERS ||--o{ FAVORITES : adds
+    MEDIA ||--o{ FAVORITES : receives
+
+    USERS {
+        bigint id PK
+        string name
+        string email UK
+        string password
+        text two_factor_secret
+        text two_factor_recovery_codes
+        timestamp two_factor_confirmed_at
+        timestamp created_at
+        timestamp updated_at
+    }
+
+    MEDIA {
+        bigint id PK
+        bigint user_id FK
+        string type
+        string file_path
+        string category
+        datetime taken_at
+        text memo
+        timestamp created_at
+        timestamp updated_at
+        timestamp deleted_at
+    }
+
+    FAVORITES {
+        bigint id PK
+        bigint user_id FK
+        bigint media_id FK
+        timestamp created_at
+        timestamp updated_at
+    }
+```
+
+### テーブル仕様
+
+#### `users`
+
+ユーザー情報を管理します。
+
+| カラム名 | 型 | 制約 | 説明 |
+| --- | --- | --- | --- |
+| `id` | BIGINT UNSIGNED | PK / AUTO INCREMENT | ユーザーID |
+| `name` | VARCHAR(255) | NOT NULL | ユーザー名 |
+| `email` | VARCHAR(255) | NOT NULL / UNIQUE | メールアドレス |
+| `password` | VARCHAR(255) | NOT NULL | ハッシュ化されたパスワード |
+| `two_factor_secret` | TEXT | NULL可 | Fortifyの2要素認証用シークレット |
+| `two_factor_recovery_codes` | TEXT | NULL可 | Fortifyの2要素認証用リカバリーコード |
+| `two_factor_confirmed_at` | TIMESTAMP | NULL可 | 2要素認証の確認日時 |
+| `created_at` | TIMESTAMP | NULL可 | 作成日時 |
+| `updated_at` | TIMESTAMP | NULL可 | 更新日時 |
+
+2要素認証用の3カラムはFortify拡張用としてスキーマに含まれていますが、現在のアプリケーションでは2要素認証機能を有効にしていません。
+
+#### `media`
+
+投稿された画像・動画の情報を管理します。
+
+| カラム名 | 型 | 制約 | 説明 |
+| --- | --- | --- | --- |
+| `id` | BIGINT UNSIGNED | PK / AUTO INCREMENT | メディアID |
+| `user_id` | BIGINT UNSIGNED | FK / NOT NULL | 投稿者のユーザーID |
+| `type` | VARCHAR(255) | NOT NULL | メディア種別（`image`または`video`） |
+| `file_path` | VARCHAR(255) | NOT NULL | 保存ファイルのパス |
+| `category` | VARCHAR(255) | NOT NULL | 動物カテゴリ |
+| `taken_at` | DATETIME | NULL可 | 撮影日時 |
+| `memo` | TEXT | NULL可 | 投稿メモ |
+| `created_at` | TIMESTAMP | NULL可 | 作成日時 |
+| `updated_at` | TIMESTAMP | NULL可 | 更新日時 |
+| `deleted_at` | TIMESTAMP | NULL可 | 論理削除日時 |
+
+`user_id`は`users.id`を参照し、ユーザーを削除した場合は関連するメディアも削除されます。
+
+#### `favorites`
+
+ユーザーがお気に入り登録した投稿を管理します。
+
+| カラム名 | 型 | 制約 | 説明 |
+| --- | --- | --- | --- |
+| `id` | BIGINT UNSIGNED | PK / AUTO INCREMENT | お気に入りID |
+| `user_id` | BIGINT UNSIGNED | FK / NOT NULL | お気に入り登録したユーザーID |
+| `media_id` | BIGINT UNSIGNED | FK / NOT NULL | 対象メディアID |
+| `created_at` | TIMESTAMP | NULL可 | 作成日時 |
+| `updated_at` | TIMESTAMP | NULL可 | 更新日時 |
+
+`user_id`と`media_id`の組み合わせにはUNIQUE制約を設定し、同じユーザーによる同じ投稿への重複登録を防いでいます。各外部キーはそれぞれ`users.id`と`media.id`を参照し、参照先を削除した場合は関連するお気に入りも削除されます。
+
+### リレーション
+
+- 1人のユーザーは複数のメディアを投稿できます。
+- 1人のユーザーは複数のメディアをお気に入り登録できます。
+- 1件のメディアは複数のユーザーからお気に入り登録されます。
+- メディアはソフトデリートを使用し、通常の削除時もデータベース上にレコードを保持します。
+
+### 補助テーブル
+
+Laravelの各機能により、主要3テーブル以外に次のテーブルも作成されます。
+
+| テーブル | 用途 |
+| --- | --- |
+| `sessions` | ログインセッション |
+| `personal_access_tokens` | SanctumのAPIトークン |
+| `cache`、`cache_locks` | キャッシュと排他制御 |
+| `jobs`、`job_batches`、`failed_jobs` | キューと失敗ジョブ |
+
 ## ローカル環境構築
 
 ### 前提
