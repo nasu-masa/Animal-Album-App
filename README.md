@@ -291,10 +291,10 @@ MEDIA_DELETE_ENABLED=false
 NEXT_PUBLIC_REGISTRATION_ENABLED=false
 NEXT_PUBLIC_MEDIA_UPLOAD_ENABLED=false
 NEXT_PUBLIC_MEDIA_DELETE_ENABLED=false
+```
 
 ## 今後の改善
 
-- デプロイと公開環境での動作確認
 - メールアドレス認証と認証メール再送
 - アップロードのレート制限、ユーザー単位の件数・容量制限、ストレージ監視
 - S3などのオブジェクトストレージ対応
