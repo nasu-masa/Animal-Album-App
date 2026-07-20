@@ -6,6 +6,8 @@
 
 [Animal Album App](https://animal-album-frontend.onrender.com/)
 
+※ 本アプリはRenderの無料プランで公開しているため、スリープ状態からの起動時は初回表示に時間がかかる場合があります。
+
 ---
 
 ## ◎ 制作背景・目的
