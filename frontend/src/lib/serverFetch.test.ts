@@ -14,12 +14,12 @@ afterEach(() => {
   vi.unstubAllGlobals();
 });
 
-test("一時的なゲートウェイエラーを再試行する", async () => {
+test("タイムアウト後に1回再試行して成功する", async () => {
   vi.mocked(fetch)
-    .mockResolvedValueOnce(new Response(null, { status: 503 }))
+    .mockRejectedValueOnce(new DOMException("Timed out", "TimeoutError"))
     .mockResolvedValueOnce(new Response(null, { status: 200 }));
 
-  const responsePromise = fetchApiOnServer("https://example.com/api/media");
+  const responsePromise = fetchApiOnServer("https://example.com/api/user");
 
   await vi.runAllTimersAsync();
 
@@ -27,26 +27,52 @@ test("一時的なゲートウェイエラーを再試行する", async () => {
   expect(fetch).toHaveBeenCalledTimes(2);
 });
 
-test("再試行対象外のエラーはそのまま返す", async () => {
+test("一時的な接続失敗後に1回再試行して成功する", async () => {
+  vi.mocked(fetch)
+    .mockRejectedValueOnce(new TypeError("fetch failed"))
+    .mockResolvedValueOnce(new Response(null, { status: 200 }));
+
+  const responsePromise = fetchApiOnServer("https://example.com/api/user");
+
+  await vi.runAllTimersAsync();
+
+  await expect(responsePromise).resolves.toMatchObject({ status: 200 });
+  expect(fetch).toHaveBeenCalledTimes(2);
+});
+
+test("502後に1回再試行して成功する", async () => {
+  vi.mocked(fetch)
+    .mockResolvedValueOnce(new Response(null, { status: 502 }))
+    .mockResolvedValueOnce(new Response(null, { status: 200 }));
+
+  const responsePromise = fetchApiOnServer("https://example.com/api/user");
+
+  await vi.runAllTimersAsync();
+
+  await expect(responsePromise).resolves.toMatchObject({ status: 200 });
+  expect(fetch).toHaveBeenCalledTimes(2);
+});
+
+test("401は再試行しない", async () => {
   vi.mocked(fetch).mockResolvedValueOnce(
-    new Response(null, { status: 500 }),
+    new Response(null, { status: 401 }),
   );
 
-  const response = await fetchApiOnServer("https://example.com/api/media");
+  const response = await fetchApiOnServer("https://example.com/api/user");
 
-  expect(response.status).toBe(500);
+  expect(response.status).toBe(401);
   expect(fetch).toHaveBeenCalledTimes(1);
 });
 
-test("一時的なエラーが続いても最大3回で停止する", async () => {
+test("2回目も失敗した場合はそこで停止する", async () => {
   vi.mocked(fetch).mockResolvedValue(
     new Response(null, { status: 504 }),
   );
 
-  const responsePromise = fetchApiOnServer("https://example.com/api/media");
+  const responsePromise = fetchApiOnServer("https://example.com/api/user");
 
   await vi.runAllTimersAsync();
 
   await expect(responsePromise).resolves.toMatchObject({ status: 504 });
-  expect(fetch).toHaveBeenCalledTimes(3);
+  expect(fetch).toHaveBeenCalledTimes(2);
 });
